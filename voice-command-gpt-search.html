@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Command GPT Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    #response {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f3f3f3;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Voice Command GPT Search</h1>
+
+  <!-- Basic Paragraph -->
+  <p id="content-paragraph">
+    In the early 21st century, technology began evolving at an unprecedented rate. The rise of the internet, smartphones, and artificial intelligence had a profound impact on society. The digital age transformed how people communicate, access information, and perform everyday tasks. With constant advancements, the future of technology promises even more innovations, especially in fields like automation and machine learning.
+  </p>
+
+  <button onclick="startVoiceRecognition()">Start Voice Command</button>
+
+  <div id="response"></div>
+
+  <script>
+    const apiKey = "YOUR_OPENAI_API_KEY"; // Insert your OpenAI API Key here!
+
+    // Basic voice recognition function using Web Speech API
+    function startVoiceRecognition() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.start();
+
+      recognition.onresult = async (event) => {
+        const userSpeech = event.results[0][0].transcript;
+        console.log("User said: ", userSpeech);
+
+        // Send voice input to ChatGPT to get relevant information
+        const content = document.getElementById('content-paragraph').innerText;
+        const responseText = await searchContentInGPT(userSpeech, content);
+        document.getElementById('response').innerText = responseText;
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+      };
+    }
+
+    // Function to query ChatGPT for matching content
+    async function searchContentInGPT(query, content) {
+      const endpoint = "https://api.openai.com/v1/chat/completions";
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      };
+
+      const body = JSON.stringify({
+        model: "gpt-3.5-turbo", // You can use gpt-4 if you have access
+        messages: [
+          { role: "system", content: "You are an assistant that extracts relevant information from a given text." },
+          { role: "user", content: `Please search through the following text and find details related to: "${query}". Text: "${content}"` }
+        ],
+        temperature: 0.5
+      });
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: headers,
+          body: body
+        });
+
+        const data = await response.json();
+        return data.choices[0].message.content;
+      } catch (error) {
+        console.error("Error:", error);
+        return "There was an error processing your request.";
+      }
+    }
+  </script>
+
+</body>
+</html>
