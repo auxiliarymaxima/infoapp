@@ -1,92 +1,127 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voice Command GPT Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voice Search GPT Assistant</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
+      background-color: #f4f4f4;
+      color: #333;
     }
-    #response {
-      margin-top: 20px;
-      padding: 10px;
-      background: #f3f3f3;
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      max-width: 800px;
+      margin: auto;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #e9ecef;
       border-radius: 8px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Voice Command GPT Search</h1>
+<div class="container">
+  <h1>Voice Search - Static Paragraph</h1>
 
-  <!-- Basic Paragraph -->
   <p id="content-paragraph">
-    In the early 21st century, technology began evolving at an unprecedented rate. The rise of the internet, smartphones, and artificial intelligence had a profound impact on society. The digital age transformed how people communicate, access information, and perform everyday tasks. With constant advancements, the future of technology promises even more innovations, especially in fields like automation and machine learning.
+    The Guyana Revenue Authority (GRA) is responsible for the administration of taxes, customs, and licensing services in Guyana. 
+    Citizens can apply for a Taxpayer Identification Number (TIN), renew their driver's licenses, register vehicles, and 
+    file income tax returns. GRA aims to provide efficient taxpayer services and improve compliance through modernization and technology.
   </p>
 
-  <button onclick="startVoiceRecognition()">Start Voice Command</button>
+  <button onclick="startListening()">Speak to Search</button>
 
-  <div id="response"></div>
+  <div id="result">
+    <h2>Result:</h2>
+    <p id="gpt-response">Your search result will appear here after speaking.</p>
+  </div>
+</div>
 
-  <script>
-    const apiKey = "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"; // Insert your OpenAI API Key here!
+<script>
+const apiKey = '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'; // Replace with your GPT API Key
 
-    // Basic voice recognition function using Web Speech API
-    function startVoiceRecognition() {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'en-US';
-      recognition.start();
+async function searchContentInGPT(query, content) {
+  const endpoint = "https://api.openai.com/v1/chat/completions";
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`
+  };
 
-      recognition.onresult = async (event) => {
-        const userSpeech = event.results[0][0].transcript;
-        console.log("User said: ", userSpeech);
+  const body = JSON.stringify({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are an assistant that only answers using the provided text." },
+      { role: "user", content: `Given the text below, answer the following query:\n\nText: "${content}"\n\nQuery: "${query}"` }
+    ],
+    temperature: 0.2,
+    max_tokens: 150
+  });
 
-        // Send voice input to ChatGPT to get relevant information
-        const content = document.getElementById('content-paragraph').innerText;
-        const responseText = await searchContentInGPT(userSpeech, content);
-        document.getElementById('response').innerText = responseText;
-      };
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: headers,
+      body: body
+    });
 
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-      };
-    }
+    const data = await response.json();
+    return data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error("Error:", error);
+    return "There was an error contacting the AI.";
+  }
+}
 
-    // Function to query ChatGPT for matching content
-    async function searchContentInGPT(query, content) {
-      const endpoint = "https://api.openai.com/v1/chat/completions";
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      };
+function startListening() {
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Your browser does not support Speech Recognition. Please use Chrome!");
+    return;
+  }
 
-      const body = JSON.stringify({
-        model: "gpt-3.5-turbo", // You can use gpt-4 if you have access
-        messages: [
-          { role: "system", content: "You are an assistant that extracts relevant information from a given text." },
-          { role: "user", content: `Please search through the following text and find details related to: "${query}". Text: "${content}"` }
-        ],
-        temperature: 0.5
-      });
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-      try {
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: headers,
-          body: body
-        });
+  recognition.start();
 
-        const data = await response.json();
-        return data.choices[0].message.content;
-      } catch (error) {
-        console.error("Error:", error);
-        return "There was an error processing your request.";
-      }
-    }
-  </script>
+  recognition.onresult = async (event) => {
+    const query = event.results[0][0].transcript;
+    console.log('User said:', query);
+
+    const content = document.getElementById('content-paragraph').innerText;
+    const result = await searchContentInGPT(query, content);
+
+    document.getElementById('gpt-response').innerText = result;
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error', event.error);
+    alert('Speech recognition error: ' + event.error);
+  };
+}
+</script>
 
 </body>
 </html>
