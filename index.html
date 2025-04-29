@@ -21,11 +21,12 @@
     }
     .news-item {
       border-bottom: 1px solid #ccc;
-      padding-bottom: 10px;
+      padding-bottom: 20px;
       margin-bottom: 20px;
     }
     .news-item h3 {
-      margin: 0;
+      margin: 0 0 5px;
+      color: #333;
     }
     .news-item p {
       margin: 5px 0;
@@ -34,38 +35,55 @@
       color: blue;
       text-decoration: underline;
     }
+    .news-item img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-<h2>InfoApp: Real-Time News Scraper</h2>
+<h2>InfoApp: Live News from the best reporters</h2>
 <button onclick="scrapeNow()">Fetch Latest News</button>
 <div id="result">Waiting for scrape...</div>
 
 <script>
-  const taskId = "UHpFz2Z3vzJHXUc4k"; // Replace with your real task ID
-  const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby"; // Replace with your real Apify API token
+  const taskId = "YOUR_TASK_ID_HERE"; // Replace with your Apify Task ID
+  const token = "YOUR_API_TOKEN_HERE"; // Replace with your Apify API Token
 
   async function scrapeNow() {
     const resultBox = document.getElementById("result");
     resultBox.innerText = "Scraping in progress...";
 
     try {
-      const response = await fetch(`https://api.apify.com/v2/actor-tasks/${taskId}/run-sync-get-dataset-items?token=${token}`, {
-        method: "POST"
-      });
+      const response = await fetch(
+        `https://api.apify.com/v2/actor-tasks/${taskId}/run-sync-get-dataset-items?token=${token}`,
+        { method: "POST" }
+      );
 
       const raw = await response.json();
       const data = Array.isArray(raw) ? raw : raw.data || [];
 
+      if (!data.length) {
+        resultBox.innerText = "No results found.";
+        return;
+      }
+
       resultBox.innerHTML = data.map(post => `
         <div class="news-item">
-          <h3>${post.title || "Untitled Post"}</h3>
-          <p>${post.text || "No description available."}</p>
-          <a href="${post.url || '#'}" target="_blank">View Original Post</a><br/>
-          <small>Posted: ${post.date || "Unknown Date"}</small>
+          <h3>${post.pageName || "Unknown Page"}</h3>
+          <p>${post.text || "No post text available."}</p>
+          <p><strong>Posted:</strong> ${post.timestamp || "Unknown date"}</p>
+          <p>
+            <strong>Likes:</strong> ${post.likesCount || 0} |
+            <strong>Shares:</strong> ${post.sharesCount || 0} |
+            <strong>Comments:</strong> ${post.commentsCount || 0}
+          </p>
+          ${post.postUrl ? `<a href="${post.postUrl}" target="_blank">View Original Post</a><br/>` : ""}
+          ${post.image || post.thumbnailUrl ? `<img src="${post.image || post.thumbnailUrl}" alt="Post Thumbnail">` : ""}
         </div>
       `).join("");
+
     } catch (error) {
       resultBox.innerText = "Error: " + error.message;
     }
