@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const apiKey = process.env.openaikey;
+  const apiKey = process.env.OPENAIKEY;
 
   if (!apiKey) {
     return res.status(500).json({ error: 'OpenAI API key not configured in environment.' });
