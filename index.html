@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfoApp</title>
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<p id="content">
+  The Guyana Revenue Authority (GRA) is responsible for the administration of taxes, customs, and licensing services in Guyana. 
+  Citizens can apply for a Taxpayer Identification Number (TIN), renew their driver's licenses, register vehicles, and 
+  file income tax returns. GRA aims to provide efficient taxpayer services and improve compliance through modernization and technology.
+</p>
+
+<button onclick="startListening()">Speak</button>
+<button id="installBtn" style="display: none;">Install InfoApp</button>
+
+<div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+
+  installBtn.addEventListener('click', () => {
+    installBtn.style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+    });
+  });
+});
+
+async function searchContent(query, content) {
+  const resultBox = document.getElementById('result');
+  resultBox.innerText = 'Processing your query...';
+
+  try {
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      alert("API Error: " + data.error);
+      resultBox.innerText = "Error: " + data.error;
+      return;
+    }
+
+    resultBox.innerText = data.reply || 'No answer found in the content.';
+  } catch (error) {
+    alert("Network error: " + error.message);
+    resultBox.innerText = "Fetch error: " + error.message;
+  }
+}
+
+function startListening() {
+  const resultBox = document.getElementById('result');
+
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Speech recognition not supported.");
+    resultBox.innerText = "Speech recognition not supported.";
+    return;
+  }
+
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.start();
+
+  recognition.onstart = () => {
+    resultBox.innerText = "Listening...";
+  };
+
+  recognition.onerror = (e) => {
+    alert("Speech recognition error: " + e.error);
+    resultBox.innerText = "Speech recognition error: " + e.error;
+  };
+
+  recognition.onresult = async (e) => {
+    const query = e.results[0][0].transcript;
+    resultBox.innerText = `Heard: "${query}"
+Searching...`;
+    const content = document.getElementById('content').innerText;
+    await searchContent(query, content);
+  };
+}
+</script>
+
+</body>
+</html>
