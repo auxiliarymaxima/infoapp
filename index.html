@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InfoApp</title>
+  <title>InfoApp News</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
   <style>
@@ -18,21 +18,15 @@
     }
     #result {
       margin-top: 20px;
-      font-weight: bold;
+      font-weight: normal;
     }
   </style>
 </head>
 <body>
 
-<h2>InfoApp: Voice Access to GRA Services</h2>
+<h2>InfoApp: Latest Guyana News</h2>
 
-<p id="content">
-  The Guyana Revenue Authority (GRA) is responsible for the administration of taxes, customs, and licensing services in Guyana. 
-  Citizens can apply for a Taxpayer Identification Number (TIN), renew their driver's licenses, register vehicles, and 
-  file income tax returns. GRA aims to provide efficient taxpayer services and improve compliance through modernization and technology.
-</p>
-
-<button onclick="startListening()">Speak</button>
+<button onclick="startNewsFetch()">Get Latest News</button>
 <button id="installBtn" style="display: none;">Install InfoApp</button>
 
 <div id="result"></div>
@@ -45,10 +39,8 @@ if ('serviceWorker' in navigator) {
 const installBtn = document.getElementById('installBtn');
 let deferredPrompt;
 
-// Check if running as a PWA
+// Show install button logic
 const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-// Show install prompt if not already installed
 if (!isPWA) {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -65,55 +57,32 @@ if (!isPWA) {
   });
 }
 
-async function searchContent(query, content) {
+async function startNewsFetch() {
   const resultBox = document.getElementById('result');
-  resultBox.innerText = 'Processing your query...';
+  resultBox.innerText = 'Fetching latest news...';
 
   try {
     const response = await fetch("/api/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
+        prompt: `Scrape the latest news headlines from Guyana including from Facebook pages like Travis Chase and Sherod Duncan, and major Guyanese news websites. Summarize each news item in 2–3 lines. Provide a headline, a short summary, a hyperlink to the original source if available, and the date published. Format the output neatly in HTML for display inside a div.`
       })
     });
 
     const data = await response.json();
-    resultBox.innerText = data.reply || 'No answer found.';
+
+    if (data.error) {
+      alert("API Error: " + data.error);
+      resultBox.innerText = "Error: " + data.error;
+      return;
+    }
+
+    resultBox.innerHTML = data.reply || 'No news found.';
   } catch (error) {
     alert("Fetch error: " + error.message);
-    resultBox.innerText = "Error: " + error.message;
+    resultBox.innerText = "Fetch error: " + error.message;
   }
-}
-
-function startListening() {
-  const resultBox = document.getElementById('result');
-
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Speech recognition not supported.");
-    resultBox.innerText = "Speech recognition not supported.";
-    return;
-  }
-
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.start();
-
-  recognition.onstart = () => {
-    resultBox.innerText = "Listening...";
-  };
-
-  recognition.onerror = (e) => {
-    alert("Speech recognition error: " + e.error);
-    resultBox.innerText = "Speech error: " + e.error;
-  };
-
-  recognition.onresult = async (e) => {
-    const query = e.results[0][0].transcript;
-    resultBox.innerText = `Heard: "${query}"\nSearching...`;
-    const content = document.getElementById('content').innerText;
-    await searchContent(query, content);
-  };
 }
 </script>
 
