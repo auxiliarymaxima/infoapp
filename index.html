@@ -11,11 +11,6 @@
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 20px;
-    }
     #result {
       margin-top: 20px;
       font-weight: normal;
@@ -40,11 +35,7 @@
 </head>
 <body>
 
-<h2>InfoApp: Today’s Latest Guyana News</h2>
-
-<button onclick="startTodayNewsFetch()">Fetch Today's News</button>
-<button id="installBtn" style="display: none;">Install InfoApp</button>
-
+<h2>InfoApp: Today’s Top 20 News Headlines from Guyana</h2>
 <div id="result"></div>
 
 <script>
@@ -52,57 +43,36 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
 
-const installBtn = document.getElementById('installBtn');
-let deferredPrompt;
-
-// Show install button logic
-const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-if (!isPWA) {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = 'inline-block';
-
-    installBtn.addEventListener('click', () => {
-      installBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-      });
-    });
-  });
-}
-
-async function startTodayNewsFetch() {
+async function fetchTodayNews() {
   const resultBox = document.getElementById('result');
-  resultBox.innerText = 'Fetching today’s latest news...';
+  resultBox.innerText = 'Fetching today’s top 20 news stories...';
 
   try {
     const today = new Date();
-    const todayDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const todayDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
 
     const response = await fetch("/api/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: `Scrape and summarize Facebook posts ONLY from today (${todayDate}) from Travis Chase, Sherod Duncan, and major Guyanese news Facebook pages. Summarize each post into 2-3 lines with: a headline, a short summary, a hyperlink to the original post if available, and today's date. Format it neatly in HTML with each news item inside a <div class="news-item"> containing a <h3>Headline</h3>, a <p>summary</p>, and a <a>hyperlink</a>.`
+        prompt: `Scrape and summarize AT LEAST 20 Facebook posts made TODAY (${todayDate}) from Travis Chase, Sherod Duncan, and other major Guyanese news outlets and pages. Include Facebook video posts, image posts, and text updates. For each item, provide: 1) a clear headline, 2) a short 2–3 line summary, 3) a hyperlink to the original Facebook post, 4) the date (today), and 5) a video/image link if available. Return all items formatted in HTML using <div class='news-item'> with <h3> for headline, <p>...
       })
     });
 
     const data = await response.json();
 
     if (data.error) {
-      alert("API Error: " + data.error);
       resultBox.innerText = "Error: " + data.error;
       return;
     }
 
     resultBox.innerHTML = data.reply || 'No news found for today.';
   } catch (error) {
-    alert("Fetch error: " + error.message);
     resultBox.innerText = "Fetch error: " + error.message;
   }
 }
+
+window.onload = fetchTodayNews;
 </script>
 
 </body>
