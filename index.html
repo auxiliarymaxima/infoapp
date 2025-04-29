@@ -8,42 +8,79 @@
 
 <p id="content">
   The Guyana Revenue Authority (GRA) is responsible for the administration of taxes, customs, and licensing services in Guyana. 
-  Citizens can apply for a Taxpayer Identification Number (TIN) renew their driver's licenses, register vehicles, and 
+  Citizens can apply for a Taxpayer Identification Number (TIN), renew their driver's licenses, register vehicles, and 
   file income tax returns. GRA aims to provide efficient taxpayer services and improve compliance through modernization and technology.
 </p>
 
 <button onclick="startListening()">Speak</button>
 
-<div id="result"></div>
+<div id="result" style="margin-top: 20px; font-weight: bold;"></div>
 
 <script>
 async function searchContent(query, content) {
-  const response = await fetch("/api/search", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
-    })
-  });
-  
-  const data = await response.json();
-  return data.reply || 'No result found.';
+  const resultBox = document.getElementById('result');
+  resultBox.innerText = 'Processing your query...';
+
+  try {
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      alert("Server error: " + errorText);
+      resultBox.innerText = "Error: Unable to process request. Server returned an error.";
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      alert("API Error: " + data.error);
+      resultBox.innerText = "Error: " + data.error;
+      return;
+    }
+
+    resultBox.innerText = data.reply || 'No answer found in the content.';
+  } catch (error) {
+    alert("Network or Fetch error: " + error.message);
+    resultBox.innerText = "Fetch error: " + error.message;
+  }
 }
 
 function startListening() {
+  const resultBox = document.getElementById('result');
+
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Speech recognition is not supported on this device.");
+    resultBox.innerText = "Speech recognition not supported.";
+    return;
+  }
+
   const recognition = new webkitSpeechRecognition();
   recognition.lang = 'en-US';
   recognition.start();
+
+  recognition.onstart = () => {
+    resultBox.innerText = "Listening...";
+  };
+
+  recognition.onerror = (e) => {
+    alert("Speech recognition error: " + e.error);
+    resultBox.innerText = "Speech recognition error: " + e.error;
+  };
+
   recognition.onresult = async (e) => {
     const query = e.results[0][0].transcript;
+    resultBox.innerText = `Heard: "${query}"\nSearching...`;
     const content = document.getElementById('content').innerText;
-    const result = await searchContent(query, content);
-    document.getElementById('result').innerText = result;
-  };
-  recognition.onerror = (e) => {
-    document.getElementById('result').innerText = 'Error: ' + e.error;
+    await searchContent(query, content);
   };
 }
 </script>
