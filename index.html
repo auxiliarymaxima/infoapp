@@ -55,7 +55,8 @@
         method: "POST"
       });
 
-      const data = await response.json();
+      const raw = await response.json();
+      const data = Array.isArray(raw) ? raw : raw.data || [];
 
       resultBox.innerHTML = data.map(post => `
         <div class="news-item">
