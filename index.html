@@ -17,16 +17,19 @@
 <div id="result"></div>
 
 <script>
-async function searchContent(query) {
-  const response = await fetch('/api/search', {
-    method: 'POST',
+async function searchContent(query, content) {
+  const response = await fetch("/api/search", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ prompt: query })
+    body: JSON.stringify({
+      prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
+    })
   });
+  
   const data = await response.json();
-  return data.reply;
+  return data.reply || 'No result found.';
 }
 
 function startListening() {
@@ -36,8 +39,7 @@ function startListening() {
   recognition.onresult = async (e) => {
     const query = e.results[0][0].transcript;
     const content = document.getElementById('content').innerText;
-    const fullPrompt = `Only answer using the following text:\n"${content}"\nUser question: "${query}"`;
-    const result = await searchContent(fullPrompt);
+    const result = await searchContent(query, content);
     document.getElementById('result').innerText = result;
   };
   recognition.onerror = (e) => {
