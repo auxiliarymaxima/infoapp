@@ -70,19 +70,13 @@
       }
 
       resultBox.innerHTML = data.map(post => `
-        <div class="news-item">
-          <h3>${post.pageName || "Unknown Page"}</h3>
-          <p>${post.text || "No post text available."}</p>
-          <p><strong>Posted:</strong> ${post.timestamp || "Unknown date"}</p>
-          <p>
-            <strong>Likes:</strong> ${post.likesCount || 0} |
-            <strong>Shares:</strong> ${post.sharesCount || 0} |
-            <strong>Comments:</strong> ${post.commentsCount || 0}
-          </p>
-          ${post.postUrl ? `<a href="${post.postUrl}" target="_blank">View Original Post</a><br/>` : ""}
-          ${post.image || post.thumbnailUrl ? `<img src="${post.image || post.thumbnailUrl}" alt="Post Thumbnail">` : ""}
-        </div>
-      `).join("");
+  <div class="news-item">
+    <h3>${post.pageName || "Unknown Page"}</h3>
+    <p>${post.text || "No post text available."}</p>
+    ${post.timestamp ? `<p>${new Date(post.timestamp * 1000).toLocaleString()}</p>` : ""}
+    ${post.postUrl ? `<a href="${post.postUrl}" target="_blank">View Original Post</a>` : ""}
+  </div>
+`).join("");
 
     } catch (error) {
       resultBox.innerText = "Error: " + error.message;
