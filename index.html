@@ -6,8 +6,25 @@
   <title>InfoApp</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
+
+<h2>InfoApp: Voice Access to GRA Services</h2>
 
 <p id="content">
   The Guyana Revenue Authority (GRA) is responsible for the administration of taxes, customs, and licensing services in Guyana. 
@@ -18,29 +35,35 @@
 <button onclick="startListening()">Speak</button>
 <button id="installBtn" style="display: none;">Install InfoApp</button>
 
-<div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+<div id="result"></div>
 
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
 
-let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
+let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'inline-block';
+// Check if running as a PWA
+const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-  installBtn.addEventListener('click', () => {
-    installBtn.style.display = 'none';
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      deferredPrompt = null;
+// Show install prompt if not already installed
+if (!isPWA) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
     });
   });
-});
+}
 
 async function searchContent(query, content) {
   const resultBox = document.getElementById('result');
@@ -49,26 +72,17 @@ async function searchContent(query, content) {
   try {
     const response = await fetch("/api/search", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         prompt: `Only use the following text to answer: "${content}". Question: "${query}"`
       })
     });
 
     const data = await response.json();
-
-    if (data.error) {
-      alert("API Error: " + data.error);
-      resultBox.innerText = "Error: " + data.error;
-      return;
-    }
-
-    resultBox.innerText = data.reply || 'No answer found in the content.';
+    resultBox.innerText = data.reply || 'No answer found.';
   } catch (error) {
-    alert("Network error: " + error.message);
-    resultBox.innerText = "Fetch error: " + error.message;
+    alert("Fetch error: " + error.message);
+    resultBox.innerText = "Error: " + error.message;
   }
 }
 
@@ -91,13 +105,12 @@ function startListening() {
 
   recognition.onerror = (e) => {
     alert("Speech recognition error: " + e.error);
-    resultBox.innerText = "Speech recognition error: " + e.error;
+    resultBox.innerText = "Speech error: " + e.error;
   };
 
   recognition.onresult = async (e) => {
     const query = e.results[0][0].transcript;
-    resultBox.innerText = `Heard: "${query}"
-Searching...`;
+    resultBox.innerText = `Heard: "${query}"\nSearching...`;
     const content = document.getElementById('content').innerText;
     await searchContent(query, content);
   };
