@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InfoApp News - Today Only</title>
+  <title>InfoApp: Latest Guyana News</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
     }
     #result {
       margin-top: 20px;
@@ -35,7 +40,11 @@
 </head>
 <body>
 
-<h2>InfoApp: Today’s Top 20 News Headlines from Guyana</h2>
+<h2>InfoApp: Fetch Today's Guyana News</h2>
+
+<button onclick="startTodayNewsFetch()">Fetch Today's News</button>
+<button id="installBtn" style="display: none;">Install InfoApp</button>
+
 <div id="result"></div>
 
 <script>
@@ -43,9 +52,30 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
 
-async function fetchTodayNews() {
+const installBtn = document.getElementById('installBtn');
+let deferredPrompt;
+
+// Install PWA button logic
+const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+if (!isPWA) {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    });
+  });
+}
+
+async function startTodayNewsFetch() {
   const resultBox = document.getElementById('result');
-  resultBox.innerText = 'Fetching today’s top 20 news stories...';
+  resultBox.innerText = 'Fetching today’s news...';
 
   try {
     const today = new Date();
@@ -55,24 +85,24 @@ async function fetchTodayNews() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: `Scrape and summarize AT LEAST 20 Facebook posts made TODAY (${todayDate}) from Travis Chase, Sherod Duncan, and other major Guyanese news outlets and pages. Include Facebook video posts, image posts, and text updates. For each item, provide: 1) a clear headline, 2) a short 2–3 line summary, 3) a hyperlink to the original Facebook post, 4) the date (today), and 5) a video/image link if available. Return all items formatted in HTML using <div class='news-item'> with <h3> for headline, <p>...
+        prompt: `Scrape and summarize Facebook posts ONLY from today (${todayDate}) from Travis Chase, Sherod Duncan, and major Guyanese news Facebook pages. Summarize each post into 2-3 lines with: a headline, a short summary, a hyperlink to the original post if available, and today's date. Format neatly using <div class='news-item'>, <h3> for headlines, <p> for summary, and <a> for links.`
       })
     });
 
     const data = await response.json();
 
     if (data.error) {
+      alert("API Error: " + data.error);
       resultBox.innerText = "Error: " + data.error;
       return;
     }
 
     resultBox.innerHTML = data.reply || 'No news found for today.';
   } catch (error) {
+    alert("Fetch error: " + error.message);
     resultBox.innerText = "Fetch error: " + error.message;
   }
 }
-
-window.onload = fetchTodayNews;
 </script>
 
 </body>
