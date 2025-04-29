@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InfoApp News</title>
+  <title>InfoApp News - Today Only</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
   <style>
@@ -20,13 +20,29 @@
       margin-top: 20px;
       font-weight: normal;
     }
+    .news-item {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    .news-item h3 {
+      margin: 0 0 5px;
+    }
+    .news-item p {
+      margin: 5px 0;
+    }
+    .news-item a {
+      color: blue;
+      text-decoration: underline;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-<h2>InfoApp: Latest Guyana News</h2>
+<h2>InfoApp: Today’s Latest Guyana News</h2>
 
-<button onclick="startNewsFetch()">Get Latest News</button>
+<button onclick="startTodayNewsFetch()">Fetch Today's News</button>
 <button id="installBtn" style="display: none;">Install InfoApp</button>
 
 <div id="result"></div>
@@ -57,16 +73,19 @@ if (!isPWA) {
   });
 }
 
-async function startNewsFetch() {
+async function startTodayNewsFetch() {
   const resultBox = document.getElementById('result');
-  resultBox.innerText = 'Fetching latest news...';
+  resultBox.innerText = 'Fetching today’s latest news...';
 
   try {
+    const today = new Date();
+    const todayDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+
     const response = await fetch("/api/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: `Scrape the latest news headlines from Guyana including from Facebook pages like Travis Chase and Sherod Duncan, and major Guyanese news websites. Summarize each news item in 2–3 lines. Provide a headline, a short summary, a hyperlink to the original source if available, and the date published. Format the output neatly in HTML for display inside a div.`
+        prompt: `Scrape and summarize Facebook posts ONLY from today (${todayDate}) from Travis Chase, Sherod Duncan, and major Guyanese news Facebook pages. Summarize each post into 2-3 lines with: a headline, a short summary, a hyperlink to the original post if available, and today's date. Format it neatly in HTML with each news item inside a <div class="news-item"> containing a <h3>Headline</h3>, a <p>summary</p>, and a <a>hyperlink</a>.`
       })
     });
 
@@ -78,7 +97,7 @@ async function startNewsFetch() {
       return;
     }
 
-    resultBox.innerHTML = data.reply || 'No news found.';
+    resultBox.innerHTML = data.reply || 'No news found for today.';
   } catch (error) {
     alert("Fetch error: " + error.message);
     resultBox.innerText = "Fetch error: " + error.message;
