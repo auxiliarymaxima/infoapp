@@ -75,7 +75,12 @@
     : "Date not available";
 
   const rawName = post.pageName || "Unknown Page";
-  const cleanName = rawName.replace(/\d+/g, '');
+
+  // Clean: remove numbers, convert dots/underscores to spaces, capitalize words
+  const cleanName = rawName
+    .replace(/\d+/g, '')                   // remove numbers
+    .replace(/[._]/g, ' ')                 // replace dots/underscores with space
+    .replace(/\b\w/g, c => c.toUpperCase()); // capitalize first letter of each word
 
   return `
     <div class="news-item">
