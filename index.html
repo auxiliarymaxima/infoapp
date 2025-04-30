@@ -121,7 +121,9 @@
         resultBox.innerText = "No results found.";
         return;
       }
-
+function truncate(text, maxLength) {
+  return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+}
       resultBox.innerHTML = data.map(post => {
         const readableDate = post.timestamp
           ? new Date(post.timestamp * 1000).toLocaleString()
@@ -136,7 +138,7 @@
         return `
           <div class="news-item">
             <h3>${cleanName}</h3>
-            <p>${post.text || "No post text available."}</p>
+            <p>${truncate(post.text || "No post text available.", 280)}</p>
             <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
             ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
           </div>
