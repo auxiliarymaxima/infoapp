@@ -1,6 +1,6 @@
 {
-  "name": "InfoApp",
-  "short_name": "InfoApp",
+  "name": "InfoWars",
+  "short_name": "InfoWars",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
