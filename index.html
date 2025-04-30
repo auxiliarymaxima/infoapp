@@ -69,14 +69,23 @@
         return;
       }
 
-      resultBox.innerHTML = data.map(post => `
-  <div class="news-item">
-    <h3>${post.pageTitle || post.pageDisplayName || post.name || post.pageName || "Unknown Source"}</h3>
-    <p>${post.text || "No post text available."}</p>
-    ${post.timestamp ? `<p style="font-size: 0.9em; color: gray;">${new Date(post.timestamp * 1000).toLocaleString()}</p>` : ""}
-    ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
-  </div>
-`).join("");
+     resultBox.innerHTML = data.map(post => {
+  const readableDate = post.timestamp
+    ? new Date(post.timestamp * 1000).toLocaleString()
+    : "Date not available";
+
+  const rawName = post.pageName || "Unknown Page";
+  const cleanName = rawName.replace(/\d+/g, '');
+
+  return `
+    <div class="news-item">
+      <h3>${cleanName}</h3>
+      <p>${post.text || "No post text available."}</p>
+      <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+      ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+    </div>
+  `;
+}).join("");
 
     } catch (error) {
       resultBox.innerText = "Error: " + error.message;
