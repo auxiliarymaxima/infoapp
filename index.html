@@ -71,7 +71,7 @@
 
       resultBox.innerHTML = data.map(post => `
   <div class="news-item">
-    <h3>${post.pageTitle || post.name || "Unknown Page"}</h3>
+    <h3>${post.pageTitle || post.pageDisplayName || post.name || post.pageName || "Unknown Source"}</h3>
     <p>${post.text || "No post text available."}</p>
     ${post.timestamp ? `<p style="font-size: 0.9em; color: gray;">${new Date(post.timestamp * 1000).toLocaleString()}</p>` : ""}
     ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
