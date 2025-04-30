@@ -45,11 +45,13 @@
 
 <h2>InfoApp: Live News from the best reporters</h2> 
 <button onclick="scrapeNow()">Fetch Latest News</button>
+<button id="installBtn" style="display: none;">Install App</button>
+
 <div id="result">Waiting for scrape...</div>
 
 <script>
-  const taskId = "UHpFz2Z3vzJHXUc4k"; // Replace with your Apify Task ID
-  const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby"; // Replace with your Apify API Token
+  const taskId = "UHpFz2Z3vzJHXUc4k";
+  const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby";
 
   async function scrapeNow() {
     const resultBox = document.getElementById("result");
@@ -69,32 +71,53 @@
         return;
       }
 
-     resultBox.innerHTML = data.map(post => {
-  const readableDate = post.timestamp
-    ? new Date(post.timestamp * 1000).toLocaleString()
-    : "Date not available";
+      resultBox.innerHTML = data.map(post => {
+        const readableDate = post.timestamp
+          ? new Date(post.timestamp * 1000).toLocaleString()
+          : "Date not available";
 
-  const rawName = post.pageName || "Unknown Page";
+        const rawName = post.pageName || "Unknown Page";
+        const cleanName = rawName
+          .replace(/\d+/g, '')
+          .replace(/[._]/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
 
-  // Clean: remove numbers, convert dots/underscores to spaces, capitalize words
-  const cleanName = rawName
-    .replace(/\d+/g, '')                   // remove numbers
-    .replace(/[._]/g, ' ')                 // replace dots/underscores with space
-    .replace(/\b\w/g, c => c.toUpperCase()); // capitalize first letter of each word
-
-  return `
-    <div class="news-item">
-      <h3>${cleanName}</h3>
-      <p>${post.text || "No post text available."}</p>
-      <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
-      ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
-    </div>
-  `;
-}).join("");
+        return `
+          <div class="news-item">
+            <h3>${cleanName}</h3>
+            <p>${post.text || "No post text available."}</p>
+            <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+            ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+          </div>
+        `;
+      }).join("");
 
     } catch (error) {
       resultBox.innerText = "Error: " + error.message;
     }
+  }
+
+  // Install App Button Logic
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    });
+  });
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
   }
 </script>
 
