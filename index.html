@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InfoApp - Scheduled News</title>
+  <title>InfoApp - Live News</title>
   <meta name="theme-color" content="#1a202c" />
   <link rel="manifest" href="manifest.json" />
   <style>
@@ -72,7 +72,7 @@
 </head>
 <body>
 <header>
-  <h2>InfoApp: Scheduled News</h2>
+  <h2>InfoApp: Live News</h2>
 </header>
 <p id="status">Loading latest scheduled news...</p>
 <div id="result">Please wait...</div>
@@ -95,7 +95,7 @@
       return;
     }
 
-    statusBox.innerText = `Showing scheduled posts`;
+    statusBox.innerText = `Showing live posts`;
 
     resultBox.innerHTML = data.map(post => {
       const readableDate = post.timestamp
