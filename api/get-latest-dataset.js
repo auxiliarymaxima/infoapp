@@ -7,6 +7,8 @@ try { if (!taskId || typeof taskId !== "string") { return res.status(400).json({
 if (!token || typeof token !== "string") {
   return res.status(400).json({ error: "Invalid or missing Apify API Token." });
 }
+const taskId = "UHpFz2Z3vzJHXUc4k";
+const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby"; // Make sure this is here and defined
 
 const url = `https://api.apify.com/v2/actor-tasks/${taskId}/runs?token=${token}&limit=1&status=SUCCEEDED`;
 
