@@ -178,6 +178,7 @@ function truncate(text, maxLength) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
   }
+  window.addEventListener("DOMContentLoaded", scrapeNow);
 </script>
 
 </body>
