@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfoApp - Live News Scrape</title>
+  <meta name="theme-color" content="#1a202c" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      color: #1a202c;
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #2d3748;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    #status {
+      text-align: center;
+      font-size: 14px;
+      color: gray;
+      margin: 10px 0;
+    }
+
+    #result {
+      margin-top: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .news-item {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .news-item h3 {
+      margin-top: 0;
+      color: #2d3748;
+    }
+
+    .news-item p {
+      margin: 8px 0;
+      word-break: break-word;
+    }
+
+    .news-item a {
+      color: #3182ce;
+      text-decoration: none;
+      word-break: break-word;
+    }
+
+    .news-item a:hover {
+      text-decoration: underline;
+    }
+
+    .news-item img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>InfoApp: Live News</h2>
+</header>
+
+<p id="status">Loading cached news...</p>
+<div id="result">Please wait...</div>
+
+<script>
+  const taskId = "UHpFz2Z3vzJHXUc4k";
+  const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby";
+
+  function truncate(text, maxLength) {
+    return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+  }
+
+  function renderPosts(data, label = "Latest") {
+    const resultBox = document.getElementById("result");
+    const statusBox = document.getElementById("status");
+
+    if (!data.length) {
+      statusBox.innerText = "No posts found.";
+      resultBox.innerHTML = "";
+      return;
+    }
+
+    statusBox.innerText = `Showing ${label} data`;
+
+    resultBox.innerHTML = data.map(post => {
+      const readableDate = post.timestamp
+        ? new Date(post.timestamp * 1000).toLocaleString()
+        : "Date not available";
+
+      const rawName = post.pageName || "Unknown Page";
+      const cleanName = rawName
+        .replace(/\d+/g, '')
+        .replace(/[._]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+      return `
+        <div class="news-item">
+          <h3>${cleanName}</h3>
+          <p>${truncate(post.text || "No post text available.", 280)}</p>
+          <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+          ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+        </div>
+      `;
+    }).join("");
+  }
+
+  async function fetchCachedDataWithDynamicDataset() {
+    const statusBox = document.getElementById("status");
+    statusBox.innerText = "Fetching latest dataset...";
+
+    try {
+      const metaResponse = await fetch(`https://api.apify.com/v2/actor-tasks/${taskId}/runs?token=${token}&limit=1&status=SUCCEEDED`);
+      const metaData = await metaResponse.json();
+      const latestRun = metaData.data?.[0];
+      const datasetId = latestRun?.defaultDatasetId;
+
+      if (!datasetId) throw new Error("No recent dataset found.");
+
+      const datasetUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true`;
+
+      const response = await fetch(datasetUrl);
+      const data = await response.json();
+      renderPosts(data, "cached");
+
+      const now = Date.now();
+      const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+      const anyStale = data.some(post => {
+        if (!post.timestamp) return true;
+        const postDate = new Date(post.timestamp * 1000);
+        return now - postDate.getTime() > FIFTEEN_MINUTES;
+      });
+
+      if (anyStale) {
+        fetchNewDataInBackground();
+      }
+
+    } catch (error) {
+      statusBox.innerText = "Failed to load cached news.";
+      console.error(error);
+    }
+  }
+
+  async function fetchNewDataInBackground() {
+    const statusBox = document.getElementById("status");
+    statusBox.innerText = "Fetching fresh data...";
+
+    try {
+      const response = await fetch(
+        `https://api.apify.com/v2/actor-tasks/${taskId}/run-sync-get-dataset-items?token=${token}`,
+        { method: "POST" }
+      );
+      const fresh = await response.json();
+      if (Array.isArray(fresh) && fresh.length > 0) {
+        renderPosts(fresh, "refreshed");
+      }
+    } catch (err) {
+      statusBox.innerText = "Refresh failed. Showing cached data.";
+      console.error("Background refresh failed:", err);
+    }
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+
+  window.addEventListener("DOMContentLoaded", fetchCachedDataWithDynamicDataset);
+</script>
+
+</body>
+</html>
