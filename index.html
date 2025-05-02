@@ -90,8 +90,8 @@
 <div id="result">Please wait...</div>
 
 <script>
-  const datasetUrl = "https://api.apify.com/v2/actor-tasks/andrewmonize~infoapptask3/runs/last/dataset/items?token=apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby&clean=true";
-
+  const datasetUrl = "/api/news"; // No more exposed key
+  
   function truncate(text, maxLength) {
     return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
   }
