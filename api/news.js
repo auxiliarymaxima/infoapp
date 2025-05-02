@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const token = process.env.API_TOKEN;
+  const token = process.env.APIFY_TOKEN;
   const taskId = "andrewmonize~infoapptask3";
 
   if (!token) {
