@@ -56,12 +56,11 @@ h2 {
   padding: 20px;
   margin-bottom: 20px;
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
 }
 
-.news-text {
+.news-content {
   flex: 1;
 }
 
@@ -85,9 +84,16 @@ h2 {
   text-decoration: underline;
 }
 
-.media-thumb {
-  width: 150px;
-  height: 100px;
+.media-preview {
+  max-width: 180px;
+  max-height: 120px;
+  flex-shrink: 0;
+}
+
+.media-preview iframe,
+.media-preview img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -105,6 +111,14 @@ h2 {
 
   function truncate(text, maxLength) {
     return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+  }
+
+  function isImage(url) {
+    return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(url);
+  }
+
+  function isFacebookVideo(url) {
+    return url.includes("facebook.com") && url.includes("/videos/");
   }
 
   function renderPosts(data) {
@@ -130,26 +144,24 @@ h2 {
         .replace(/[._]/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase());
 
-      let mediaContent = "";
-      const media = post.media?.[0];
-
-      if (media) {
-        if (media.mimeType?.includes("video")) {
-          mediaContent = `<iframe class="media-thumb" src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(media.url)}" frameborder="0" allowfullscreen></iframe>`;
-        } else if (media.mimeType?.includes("image")) {
-          mediaContent = `<img class="media-thumb" src="${media.url}" alt="Post media">`;
+      let mediaHTML = "";
+      if (post.media && typeof post.media === 'string') {
+        if (isImage(post.media)) {
+          mediaHTML = `<div class="media-preview"><img src="${post.media}" alt="Post media"></div>`;
+        } else if (isFacebookVideo(post.media)) {
+          mediaHTML = `<div class="media-preview"><iframe src="${post.media}" frameborder="0" allowfullscreen></iframe></div>`;
         }
       }
 
       return `
         <div class="news-item">
-          <div class="news-text">
+          <div class="news-content">
             <h3>${cleanName}</h3>
             <p>${truncate(post.text || "No post text available.", 280)}</p>
             <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
             ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
           </div>
-          ${mediaContent}
+          ${mediaHTML}
         </div>
       `;
     }).join("");
