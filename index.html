@@ -122,49 +122,48 @@ h2 {
   }
 
   function renderPosts(data) {
-    const resultBox = document.getElementById("result");
-    const statusBox = document.getElementById("status");
+  const resultBox = document.getElementById("result");
+  const statusBox = document.getElementById("status");
 
-    if (!data.length) {
-      statusBox.innerText = "No posts found.";
-      resultBox.innerHTML = "";
-      return;
+  if (!data.length) {
+    statusBox.innerText = "No posts found.";
+    resultBox.innerHTML = "";
+    return;
+  }
+
+  statusBox.innerText = `Showing latest posts`;
+
+  resultBox.innerHTML = data.map(post => {
+    const readableDate = post.timestamp
+      ? new Date(post.timestamp * 1000).toLocaleString()
+      : "Date not available";
+
+    const rawName = post.pageName || "Unknown Page";
+    const cleanName = rawName
+      .replace(/\d+/g, '')
+      .replace(/[._]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+
+    // Media handling
+    let mediaHTML = '';
+    if (post.media && Array.isArray(post.media) && post.media.length > 0) {
+      const media = post.media[0]; // only use the first media
+      if (media.__typename === 'Photo' && media.photo_image?.uri) {
+        mediaHTML = `<img src="${media.photo_image.uri}" alt="Post Media" style="max-width: 120px; max-height: 120px; float: right; margin-left: 15px; border-radius: 6px;" />`;
+      }
+      // Future handling for video or other media types can go here
     }
 
-    statusBox.innerText = `Showing latest posts`;
-
-    resultBox.innerHTML = data.map(post => {
-      const readableDate = post.timestamp
-        ? new Date(post.timestamp * 1000).toLocaleString()
-        : "Date not available";
-
-      const rawName = post.pageName || "Unknown Page";
-      const cleanName = rawName
-        .replace(/\d+/g, '')
-        .replace(/[._]/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
-
-      let mediaHTML = "";
-      if (post.media && typeof post.media === 'string') {
-        if (isImage(post.media)) {
-          mediaHTML = `<div class="media-preview"><img src="${post.media}" alt="Post media"></div>`;
-        } else if (isFacebookVideo(post.media)) {
-          mediaHTML = `<div class="media-preview"><iframe src="${post.media}" frameborder="0" allowfullscreen></iframe></div>`;
-        }
-      }
-
-      return `
-        <div class="news-item">
-          <div class="news-content">
-            <h3>${cleanName}</h3>
-            <p>${truncate(post.text || "No post text available.", 280)}</p>
-            <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
-            ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
-          </div>
-          ${mediaHTML}
-        </div>
-      `;
-    }).join("");
+    return `
+      <div class="news-item" style="overflow: hidden;">
+        <h3>${cleanName}</h3>
+        ${mediaHTML}
+        <p>${truncate(post.text || "No post text available.", 280)}</p>
+        <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+        ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+      </div>
+    `;
+  }).join("");
   }
 
   async function loadNews() {
