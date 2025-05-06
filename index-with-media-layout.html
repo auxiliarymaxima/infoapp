@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfoWars - Live News</title>
+  <meta name="theme-color" content="#1a202c" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      color: #1a202c;
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #2d3748;
+      color: #fff;
+      padding: 20px;
+      text-align: left;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    #installBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      background-color: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #status {
+      text-align: center;
+      font-size: 14px;
+      color: gray;
+      margin: 10px 0;
+    }
+
+    #result {
+      margin-top: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .news-item {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .media-thumb {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .news-content {
+      flex: 1;
+    }
+
+    .news-meta {
+      font-size: 0.9em;
+      color: gray;
+      margin-top: 4px;
+    }
+
+    .news-item h3 {
+      margin-top: 0;
+      color: #2d3748;
+    }
+
+    .news-item p {
+      margin: 8px 0;
+      word-break: break-word;
+    }
+
+    .news-item a {
+      color: #3182ce;
+      text-decoration: none;
+      word-break: break-word;
+    }
+
+    .news-item a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h2>InfoWars - News &#128250; <span style="color: red;">LIVE</span></h2>
+  <button id="installBtn" style="display: none;">Install App</button>
+</header>
+<p id="status">Loading latest news...</p>
+<div id="result">Please wait...</div>
+
+<script>
+  const datasetUrl = "/api/news";
+
+  function truncate(text, maxLength) {
+    return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+  }
+
+  function renderPosts(data) {
+    const resultBox = document.getElementById("result");
+    const statusBox = document.getElementById("status");
+
+    if (!data.length) {
+      statusBox.innerText = "No posts found.";
+      resultBox.innerHTML = "";
+      return;
+    }
+
+    statusBox.innerText = `Showing latest posts`;
+
+    resultBox.innerHTML = data.map(post => {
+      const readableDate = post.timestamp
+        ? new Date(post.timestamp * 1000).toLocaleString()
+        : "Date not available";
+
+      const rawName = post.pageName || "Unknown Page";
+      const cleanName = rawName
+        .replace(/\d+/g, '')
+        .replace(/[._]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+      let mediaHTML = "";
+      if (post.media && post.media.length && post.media[0].photo_image?.uri) {
+        mediaHTML = `<img src="${post.media[0].photo_image.uri}" class="media-thumb" alt="media">`;
+      }
+
+      return `
+        <div class="news-item">
+          ${mediaHTML}
+          <div class="news-content">
+            <h3>${cleanName}</h3>
+            <p>${truncate(post.text || "No post text available.", 280)}</p>
+            <div class="news-meta">
+              <span>${readableDate}</span> • 
+              ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  async function loadNews() {
+    const statusBox = document.getElementById("status");
+
+    try {
+      const response = await fetch(datasetUrl);
+      const data = await response.json();
+      renderPosts(data);
+    } catch (error) {
+      statusBox.innerText = "Failed to load news: " + error.message;
+    }
+  }
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    });
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+
+  window.addEventListener("DOMContentLoaded", loadNews);
+</script>
+</body>
+</html>
