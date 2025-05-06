@@ -47,7 +47,7 @@
 
     #result {
       margin-top: 30px;
-      max-width: 800px;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -59,25 +59,13 @@
       padding: 20px;
       margin-bottom: 20px;
       display: flex;
-      gap: 15px;
+      justify-content: space-between;
       align-items: flex-start;
+      gap: 15px;
     }
 
-    .media-thumb {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .news-content {
+    .text-content {
       flex: 1;
-    }
-
-    .news-meta {
-      font-size: 0.9em;
-      color: gray;
-      margin-top: 4px;
     }
 
     .news-item h3 {
@@ -99,6 +87,22 @@
     .news-item a:hover {
       text-decoration: underline;
     }
+
+    .media-box {
+      flex-shrink: 0;
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .media-box img,
+    .media-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -110,7 +114,7 @@
 <div id="result">Please wait...</div>
 
 <script>
-  const datasetUrl = "/api/news";
+  const datasetUrl = "/api/news"; // Backend-protected API call
 
   function truncate(text, maxLength) {
     return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
@@ -140,21 +144,27 @@
         .replace(/\b\w/g, c => c.toUpperCase());
 
       let mediaHTML = "";
-      if (post.media && post.media.length && post.media[0].photo_image?.uri) {
-        mediaHTML = `<img src="${post.media[0].photo_image.uri}" class="media-thumb" alt="media">`;
+      if (Array.isArray(post.media) && post.media.length > 0) {
+        const mediaItem = post.media[0];
+        const type = mediaItem.__typename || "Photo";
+        const mediaUrl = mediaItem?.photo_image?.uri || mediaItem?.url || "";
+
+        if (type === "Photo" && mediaUrl) {
+          mediaHTML = `<div class="media-box"><img src="${mediaUrl}" alt="Media" /></div>`;
+        } else if (type === "Video" && mediaUrl) {
+          mediaHTML = `<div class="media-box"><video controls src="${mediaUrl}"></video></div>`;
+        }
       }
 
       return `
         <div class="news-item">
-          ${mediaHTML}
-          <div class="news-content">
+          <div class="text-content">
             <h3>${cleanName}</h3>
             <p>${truncate(post.text || "No post text available.", 280)}</p>
-            <div class="news-meta">
-              <span>${readableDate}</span> • 
-              ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
-            </div>
+            <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+            ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
           </div>
+          ${mediaHTML}
         </div>
       `;
     }).join("");
