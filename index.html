@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,127 +8,127 @@
   <link rel="manifest" href="manifest.json" />
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6f8;
       color: #1a202c;
+      margin: 0;
+      padding: 0;
     }
 
     header {
       background-color: #2d3748;
-      color: white;
+      color: #fff;
       padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
+      text-align: left;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
     }
 
     #installBtn {
-      display: none;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      background-color: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
-    .section {
-      padding: 15px;
-      margin: 15px 0;
-    }
-
-    .container {
+    #main-container {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
-      justify-content: space-between;
+      padding: 20px;
     }
 
-    .column {
-      flex: 1 1 48%;
-      background-color: white;
-      border-radius: 8px;
-      padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    #posts, #youtube {
+      flex: 1 1 400px;
+      max-width: 700px;
     }
 
-    .column-title {
-      font-weight: bold;
+    #status {
+      font-size: 14px;
+      color: gray;
       margin-bottom: 10px;
     }
 
-    .ad-section {
-      background-color: #f97316;
-      color: white;
-      text-align: center;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
-    }
-
     .news-item {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ddd;
+      gap: 15px;
     }
 
     .news-text {
       flex: 1;
-      margin-right: 10px;
     }
 
     .news-item h3 {
       margin: 0;
+      color: #2d3748;
       font-size: 16px;
     }
 
     .news-item p {
-      margin: 5px 0;
+      margin: 6px 0;
+      font-size: 13px;
+      word-break: break-word;
     }
 
     .news-item a {
       color: #3182ce;
       text-decoration: none;
+      font-size: 13px;
     }
 
     .news-item a:hover {
       text-decoration: underline;
     }
 
-    .media-preview {
+    .news-media {
       width: 100px;
       height: 100px;
       object-fit: cover;
       border-radius: 6px;
     }
 
-    .video-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .youtube-box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
-    .video-placeholder {
-      background: black;
-      color: white;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .youtube-box iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
       border-radius: 6px;
     }
 
     @media (max-width: 768px) {
-      .column {
-        flex: 1 1 100%;
+      #main-container {
+        flex-direction: column;
+        padding: 10px;
       }
 
       .news-item {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
       }
 
-      .media-preview {
-        margin-top: 10px;
+      .news-media {
         width: 100%;
         height: auto;
       }
@@ -137,42 +136,25 @@
   </style>
 </head>
 <body>
-
 <header>
-  InfoWars - News &#128250; <span style="color: red;">LIVE</span>
-  <button id="installBtn">Install App</button>
+  <h2>InfoWars - News &#128250; <span style="color: red;">LIVE</span></h2>
+  <button id="installBtn" style="display: none;">Install App</button>
 </header>
 
-<div class="section container">
-  <div class="column">
-    <div class="column-title">Facebook Posts</div>
-    <div id="facebook-posts">Loading posts...</div>
+<div id="main-container">
+  <div id="posts">
+    <p id="status">Loading latest news...</p>
+    <div id="result">Please wait...</div>
   </div>
-  <div class="column">
-    <div class="column-title" style="color: white; background-color: #e11d48; padding: 8px; border-radius: 6px;">YouTube Channels</div>
-    <div class="video-grid">
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
+
+  <div id="youtube">
+    <div class="youtube-box">
+      <h3>Featured YouTube Channel</h3>
+      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" allowfullscreen></iframe>
     </div>
-  </div>
-</div>
-
-<div class="ad-section">ADVERTISEMENTS</div>
-
-<div class="section container">
-  <div class="column">
-    <div class="column-title">Facebook Posts</div>
-    <div id="facebook-posts-2">Loading more posts...</div>
-  </div>
-  <div class="column">
-    <div class="column-title" style="color: white; background-color: #e11d48; padding: 8px; border-radius: 6px;">YouTube Channels</div>
-    <div class="video-grid">
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
-      <div class="video-placeholder">Video</div>
+    <div class="youtube-box">
+      <h3>More Content</h3>
+      <iframe src="https://www.youtube.com/embed/YOUR_SECOND_VIDEO_ID" allowfullscreen></iframe>
     </div>
   </div>
 </div>
@@ -184,46 +166,74 @@
     return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
   }
 
-  function renderPost(post) {
-    const readableDate = post.timestamp
-      ? new Date(post.timestamp * 1000).toLocaleString()
-      : "Date not available";
+  function renderPosts(data) {
+    const resultBox = document.getElementById("result");
+    const statusBox = document.getElementById("status");
 
-    const displayName = post.user?.name || "Unknown Page";
-    const media = post.media?.[0];
-    const mediaUrl = post.postUrl || post.url;
-
-    let mediaHTML = "";
-    if (media?.photo_image?.uri) {
-      mediaHTML = `<a href="${mediaUrl}" target="_blank"><img class="media-preview" src="${media.photo_image.uri}" alt="media"></a>`;
+    if (!data.length) {
+      statusBox.innerText = "No posts found.";
+      resultBox.innerHTML = "";
+      return;
     }
 
-    return `
-      <div class="news-item">
-        <div class="news-text">
-          <h3>${displayName}</h3>
-          <p>${truncate(post.text || "No post text available.", 180)}</p>
-          <p style="font-size: 0.8em; color: gray;">${readableDate}</p>
-          ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
+    statusBox.innerText = `Showing latest posts`;
+
+    resultBox.innerHTML = data.map(post => {
+      const readableDate = post.timestamp
+        ? new Date(post.timestamp * 1000).toLocaleString()
+        : "Date not available";
+
+      const displayName = post.user?.name || "Unknown Page";
+
+      const mediaThumbnail = post.media?.[0]?.thumbnail;
+      const mediaUrl = post.postUrl || post.url;
+
+      const mediaHTML = mediaThumbnail && mediaUrl
+        ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
+        : "";
+
+      return `
+        <div class="news-item">
+          <div class="news-text">
+            <h3>${displayName}</h3>
+            <p>${truncate(post.text || "No post text available.", 180)}</p>
+            <p style="font-size: 0.8em; color: gray;">${readableDate}</p>
+            ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
+          </div>
+          ${mediaHTML}
         </div>
-        ${mediaHTML}
-      </div>
-    `;
+      `;
+    }).join("");
   }
 
   async function loadNews() {
+    const statusBox = document.getElementById("status");
+
     try {
       const response = await fetch(datasetUrl);
       const data = await response.json();
-      const html = data.slice(0, 4).map(renderPost).join("");
-      const html2 = data.slice(4, 8).map(renderPost).join("");
-      document.getElementById("facebook-posts").innerHTML = html;
-      document.getElementById("facebook-posts-2").innerHTML = html2;
-    } catch (err) {
-      document.getElementById("facebook-posts").innerText = "Failed to load posts.";
-      document.getElementById("facebook-posts-2").innerText = "Failed to load posts.";
+      renderPosts(data);
+    } catch (error) {
+      statusBox.innerText = "Failed to load news: " + error.message;
     }
   }
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    });
+  });
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
@@ -231,6 +241,5 @@
 
   window.addEventListener("DOMContentLoaded", loadNews);
 </script>
-
 </body>
 </html>
