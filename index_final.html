@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfoWars - Live News</title>
+  <meta name="theme-color" content="#1a202c" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+    }
+    header {
+      background-color: #004aad;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      gap: 20px;
+    }
+    .column {
+      flex: 1;
+      min-width: 300px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    #result {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .news-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .news-text {
+      flex: 1;
+      font-size: 0.85rem;
+    }
+    .news-media {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .video-grid div {
+      background: black;
+      height: 90px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .ads {
+      background: #ff914d;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      margin: 20px 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header>
+
+  <div class="main-container">
+    <div class="column">
+      <div class="section-title" style="color:white;background:#004aad;padding:10px;border-radius:8px;">FACEBOOK POSTS</div>
+      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+      <div id="result"></div>
+    </div>
+
+    <div class="column">
+      <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">YouTube channels</div>
+      <div class="video-grid">
+        <div>Video</div><div>Video</div>
+        <div>Video</div><div>Video</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ads">ADVERTISEMENT</div>
+
+  <script>
+    const datasetUrl = "/api/news";
+    function truncate(text, maxLength) {
+      return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+    }
+    function renderPosts(data) {
+      const resultBox = document.getElementById("result");
+      const statusBox = document.getElementById("status");
+      if (!data.length) {
+        statusBox.innerText = "No posts found.";
+        resultBox.innerHTML = "";
+        return;
+      }
+      statusBox.innerText = `Showing latest posts`;
+      resultBox.innerHTML = data.map(post => {
+        const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
+        const displayName = post.user?.name || "Unknown Page";
+        const mediaThumbnail = post.media?.[0]?.thumbnail;
+        const mediaUrl = post.postUrl || post.url;
+        const mediaHTML = mediaThumbnail && mediaUrl
+          ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
+          : "";
+        return `<div class="card"><div class="news-item"><div class="news-text"><h3>${displayName}</h3><p>${truncate(post.text || "No post text available.", 200)}</p><p style="font-size: 0.75rem; color: gray;">${readableDate}</p>${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}</div>${mediaHTML}</div></div>`;
+      }).join("");
+    }
+    async function loadNews() {
+      const statusBox = document.getElementById("status");
+      try {
+        const response = await fetch(datasetUrl);
+        const data = await response.json();
+        renderPosts(data);
+      } catch (error) {
+        statusBox.innerText = "Failed to load news: " + error.message;
+      }
+    }
+    window.addEventListener("DOMContentLoaded", loadNews);
+  </script>
+</body>
+</html>
