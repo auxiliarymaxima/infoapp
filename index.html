@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Info Wars - Live News</title>
+  <title>InfoWars - Live News</title>
   <meta name="theme-color" content="#1a202c" />
   <link rel="manifest" href="manifest.json" />
   <style>
@@ -58,6 +59,14 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       padding: 20px;
       margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .news-text {
+      flex: 1;
     }
 
     .news-item h3 {
@@ -79,19 +88,26 @@
     .news-item a:hover {
       text-decoration: underline;
     }
+
+    .news-media {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
 <header>
-  <h2>Info Wars &#128250; <span style="color: #FF5349;">LIVE</span> News</h2>
+  <h2>InfoWars - News &#128250; <span style="color: red;">LIVE</span></h2>
   <button id="installBtn" style="display: none;">Install App</button>
 </header>
 <p id="status">Loading latest news...</p>
 <div id="result">Please wait...</div>
 
 <script>
-  const datasetUrl = "/api/news"; // No more exposed key
-  
+  const datasetUrl = "/api/news";
+
   function truncate(text, maxLength) {
     return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
   }
@@ -113,18 +129,24 @@
         ? new Date(post.timestamp * 1000).toLocaleString()
         : "Date not available";
 
-      const rawName = post.pageName || "Unknown Page";
-      const cleanName = rawName
-        .replace(/\d+/g, '')
-        .replace(/[._]/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
+      const displayName = post.user?.name || "Unknown Page";
+
+      const mediaThumbnail = post.media?.[0]?.thumbnail;
+      const mediaUrl = post.postUrl || post.url;
+
+      const mediaHTML = mediaThumbnail && mediaUrl
+        ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
+        : "";
 
       return `
         <div class="news-item">
-          <h3>${cleanName}</h3>
-          <p>${truncate(post.text || "No post text available.", 280)}</p>
-          <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
-          ${post.postUrl || post.url ? `<a href="${post.postUrl || post.url}" target="_blank">View Original Post</a>` : ""}
+          <div class="news-text">
+            <h3>${displayName}</h3>
+            <p>${truncate(post.text || "No post text available.", 280)}</p>
+            <p style="font-size: 0.9em; color: gray;">${readableDate}</p>
+            ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
+          </div>
+          ${mediaHTML}
         </div>
       `;
     }).join("");
