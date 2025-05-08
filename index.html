@@ -132,7 +132,7 @@
         const mediaHTML = mediaThumbnail && mediaUrl
           ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
           : "";
-        return `<div class="card"><div class="news-item"><div class="news-text"><h3>${displayName}</h3><p>${truncate(post.text || "No post text available.", 200)}</p><p style="font-size: 0.75rem; color: gray;">${readableDate}</p>${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}</div>${mediaHTML}</div></div>`;
+        return `<div class="card"><div class="news-item"><div class="news-text"><h3>${displayName}</h3><p>${truncate(post.text || "...", 200)}</p><p style="font-size: 0.75rem; color: gray;">${readableDate}</p>${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}</div>${mediaHTML}</div></div>`;
       }).join("");
     }
     async function loadNews() {
