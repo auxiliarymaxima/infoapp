@@ -30,13 +30,14 @@
       flex: 1;
       min-width: 300px;
     }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px; /* reduced from 15px */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
     .section-title {
       font-size: 1.1rem;
       font-weight: bold;
@@ -47,8 +48,9 @@
       cursor: pointer;
     }
     .section-content {
-      display: block;
-      transition: max-height 0.3s ease;
+  display: block;
+  padding: 0;
+  margin: 0;
     }
     #result {
       display: flex;
