@@ -179,7 +179,7 @@
       container.innerHTML = data.slice(0, 6).map(video => {
         const title = video.title || "Untitled Video";
         const url = video.url || "#";
-        const thumbnail = video.thumbnail || "";
+        const thumbnail = video.thumbnailUrl || "";
         const channel = video.channelName || "Unknown Channel";
 
         return `
