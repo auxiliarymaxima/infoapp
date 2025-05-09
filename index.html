@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,17 +65,23 @@
     }
     .video-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
     }
-    .video-grid div {
-      background: black;
-      height: 90px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+    .video-thumb {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .video-thumb img {
+      width: 100%;
+      display: block;
+    }
+    .video-thumb p {
+      margin: 5px;
+      font-size: 12px;
+      color: #333;
     }
     .ads {
       background: #ff914d;
@@ -85,7 +90,7 @@
       padding: 10px;
       border-radius: 5px;
       color: white;
-      margin: 20px 0 10px;
+      margin: 20px 10px 10px;
     }
   </style>
 </head>
@@ -100,10 +105,9 @@
     </div>
 
     <div class="column">
-      <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">YouTube channels</div>
-      <div class="video-grid">
-        <div>Video</div><div>Video</div>
-        <div>Video</div><div>Video</div>
+      <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">YouTube Channels</div>
+      <div class="video-grid" id="youtube-feed">
+        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
       </div>
     </div>
   </div>
@@ -112,29 +116,49 @@
 
   <script>
     const datasetUrl = "/api/news";
+
     function truncate(text, maxLength) {
       return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
     }
+
     function renderPosts(data) {
       const resultBox = document.getElementById("result");
       const statusBox = document.getElementById("status");
+
       if (!data.length) {
         statusBox.innerText = "No posts found.";
         resultBox.innerHTML = "";
         return;
       }
+
       statusBox.innerText = `Showing latest posts`;
+
       resultBox.innerHTML = data.map(post => {
         const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
         const displayName = post.user?.name || "Unknown Page";
         const mediaThumbnail = post.media?.[0]?.thumbnail;
         const mediaUrl = post.postUrl || post.url;
+
         const mediaHTML = mediaThumbnail && mediaUrl
           ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
           : "";
-        return `<div class="card"><div class="news-item"><div class="news-text"><h3>${displayName}</h3><p>${truncate(post.text || "...", 200)}</p><p style="font-size: 0.75rem; color: gray;">${readableDate}</p>${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}</div>${mediaHTML}</div></div>`;
+
+        return `
+          <div class="card">
+            <div class="news-item">
+              <div class="news-text">
+                <h3>${displayName}</h3>
+                <p>${truncate(post.text || "...", 200)}</p>
+                <p style="font-size: 0.75rem; color: gray;">${readableDate}</p>
+                ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
+              </div>
+              ${mediaHTML}
+            </div>
+          </div>
+        `;
       }).join("");
     }
+
     async function loadNews() {
       const statusBox = document.getElementById("status");
       try {
@@ -145,36 +169,37 @@
         statusBox.innerText = "Failed to load news: " + error.message;
       }
     }
+
     async function loadYouTube() {
-  const container = document.getElementById("youtube-feed");
-  try {
-    const response = await fetch("/api/youtube");
-    const data = await response.json();
+      const container = document.getElementById("youtube-feed");
+      try {
+        const response = await fetch("/api/youtube");
+        const data = await response.json();
 
-    container.innerHTML = data.slice(0, 6).map(video => {
-      const title = video.title || "Untitled Video";
-      const url = video.url || "#";
-      const thumbnail = video.thumbnail || "";
+        container.innerHTML = data.slice(0, 6).map(video => {
+          const title = video.title || "Untitled Video";
+          const url = video.url || "#";
+          const thumbnail = video.thumbnail || "";
 
-      return `
-        <div style="width: 160px;">
-          <a href="${url}" target="_blank">
-            <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
-            <p style="font-size: 12px; margin-top: 5px;">${title}</p>
-          </a>
-        </div>
-      `;
-    }).join("");
+          return `
+            <div class="video-thumb">
+              <a href="${url}" target="_blank">
+                <img src="${thumbnail}" alt="YouTube thumbnail">
+                <p>${truncate(title, 50)}</p>
+              </a>
+            </div>
+          `;
+        }).join("");
 
-  } catch (err) {
-    container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
-  }
+      } catch (err) {
+        container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+      }
     }
-    window.addEventListener("DOMContentLoaded", () => {
-  loadNews();
-  loadYouTube(); // add this
-});
 
+    window.addEventListener("DOMContentLoaded", () => {
+      loadNews();
+      loadYouTube();
+    });
   </script>
 </body>
 </html>
