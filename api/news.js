@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const token = process.env.APIFY_TOKEN;
-  const taskId = "andrewmonize~infoapptask3";
+  const taskId = "UHpFz2Z3vzJHXUc4k";
 
   if (!token) {
     return res.status(500).json({ error: "Missing APIFY_TOKEN in environment variables." });
