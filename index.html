@@ -145,7 +145,36 @@
         statusBox.innerText = "Failed to load news: " + error.message;
       }
     }
-    window.addEventListener("DOMContentLoaded", loadNews);
+    async function loadYouTube() {
+  const container = document.getElementById("youtube-feed");
+  try {
+    const response = await fetch("/api/youtube");
+    const data = await response.json();
+
+    container.innerHTML = data.slice(0, 6).map(video => {
+      const title = video.title || "Untitled Video";
+      const url = video.url || "#";
+      const thumbnail = video.thumbnail || "";
+
+      return `
+        <div style="width: 160px;">
+          <a href="${url}" target="_blank">
+            <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
+            <p style="font-size: 12px; margin-top: 5px;">${title}</p>
+          </a>
+        </div>
+      `;
+    }).join("");
+
+  } catch (err) {
+    container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+  }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+  loadNews();
+  loadYouTube(); // add this
+});
+
   </script>
 </body>
 </html>
