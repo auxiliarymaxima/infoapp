@@ -38,9 +38,17 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .section-title {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
       margin: 10px 0;
+      background-color: #ddd;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .section-content {
+      display: block;
+      transition: max-height 0.3s ease;
     }
     #result {
       display: flex;
@@ -68,29 +76,12 @@
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
     }
-    .video-thumb {
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    .video-thumb img {
-      width: 100%;
-      display: block;
-    }
-    .video-thumb p {
-      margin: 5px;
-      font-size: 12px;
-      color: #333;
-    }
     .ads {
-      background: #ff914d;
       text-align: center;
       font-weight: bold;
-      padding: 10px;
-      border-radius: 5px;
-      color: white;
-      margin: 20px 10px 10px;
+      padding: 20px;
+      background-color: #ffcb6b;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -99,26 +90,38 @@
 
   <div class="main-container">
     <div class="column">
-      <div class="section-title" style="color:white;background:#004aad;padding:10px;border-radius:8px;">FACEBOOK POSTS</div>
-      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
-      <div id="result"></div>
+      <div class="section-title" onclick="toggleSection('fb-content')">FACEBOOK POSTS</div>
+      <div class="section-content" id="fb-content">
+        <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+        <div id="result"></div>
+      </div>
     </div>
 
     <div class="column">
-      <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">YouTube Channels</div>
-      <div class="video-grid" id="youtube-feed">
-        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
+      <div class="section-title" onclick="toggleSection('yt-content')">YOUTUBE CHANNELS</div>
+      <div class="section-content" id="yt-content">
+        <div class="video-grid" id="youtube-feed">
+          <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
+        </div>
+      </div>
+
+      <div class="section-title" onclick="toggleSection('ads-content')">ADVERTISEMENT</div>
+      <div class="section-content" id="ads-content">
+        <div class="ads">Your ad could be here!</div>
       </div>
     </div>
   </div>
-
-  <div class="ads">ADVERTISEMENT</div>
 
   <script>
     const datasetUrl = "/api/news";
 
     function truncate(text, maxLength) {
       return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+    }
+
+    function toggleSection(id) {
+      const el = document.getElementById(id);
+      el.style.display = (el.style.display === "none") ? "block" : "none";
     }
 
     function renderPosts(data) {
@@ -170,33 +173,32 @@
       }
     }
 
-  async function loadYouTube() {
-    const container = document.querySelector(".video-grid");
-    try {
-      const response = await fetch("/api/youtube");
-      const data = await response.json();
+    async function loadYouTube() {
+      const container = document.getElementById("youtube-feed");
+      try {
+        const response = await fetch("/api/youtube");
+        const data = await response.json();
 
-      container.innerHTML = data.slice(0, 6).map(video => {
-        const title = video.title || "Untitled Video";
-        const url = video.url || "#";
-        const thumbnail = video.thumbnailUrl || "";
-        const channel = video.channelName || "Unknown Channel";
+        container.innerHTML = data.slice(0, 6).map(video => {
+          const title = video.title || "Untitled Video";
+          const url = video.url || "#";
+          const thumbnail = video.thumbnailUrl || "";
+          const channel = video.channelName || "Unknown Channel";
 
-        return `
-          <div style="width: 100%;">
-          <a href="${url}" target="_blank">
-              <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
-          </a>   
+          return `
+            <div style="width: 100%;">
+              <a href="${url}" target="_blank">
+                <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
+              </a>
               <p style="font-weight: bold; font-size: 13px; margin: 5px 0 0;">${channel}</p>
               <p style="font-size: 12px; margin-top: 2px;">${title}</p>
-          </div>
-        `;
-      }).join("");
-
-    } catch (err) {
-      container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+            </div>
+          `;
+        }).join("");
+      } catch (err) {
+        container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+      }
     }
-  }
 
     window.addEventListener("DOMContentLoaded", () => {
       loadNews();
