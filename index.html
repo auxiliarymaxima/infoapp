@@ -170,31 +170,33 @@
       }
     }
 
-    async function loadYouTube() {
-      const container = document.getElementById("youtube-feed");
-      try {
-        const response = await fetch("/api/youtube");
-        const data = await response.json();
+  async function loadYouTube() {
+    const container = document.querySelector(".video-grid");
+    try {
+      const response = await fetch("/api/youtube");
+      const data = await response.json();
 
-        container.innerHTML = data.slice(0, 6).map(video => {
-          const title = video.title || "Untitled Video";
-          const url = video.url || "#";
-          const thumbnail = video.thumbnail || "";
+      container.innerHTML = data.slice(0, 6).map(video => {
+        const title = video.title || "Untitled Video";
+        const url = video.url || "#";
+        const thumbnail = video.thumbnail || "";
+        const channel = video.channelName || "Unknown Channel";
 
-          return `
-            <div class="video-thumb">
-              <a href="${url}" target="_blank">
-                <img src="${thumbnail}" alt="YouTube thumbnail">
-                <p>${truncate(title, 50)}</p>
-              </a>
-            </div>
-          `;
-        }).join("");
+        return `
+          <div style="width: 100%;">
+            <a href="${url}" target="_blank">
+              <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
+              <p style="font-weight: bold; font-size: 13px; margin: 5px 0 0;">${channel}</p>
+              <p style="font-size: 12px; margin-top: 2px;">${title}</p>
+            </a>
+          </div>
+        `;
+      }).join("");
 
-      } catch (err) {
-        container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
-      }
+    } catch (err) {
+      container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
     }
+  }
 
     window.addEventListener("DOMContentLoaded", () => {
       loadNews();
