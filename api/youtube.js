@@ -1,6 +1,8 @@
+// File: /api/youtube.js
+
 export default async function handler(req, res) {
-  const token = process.env.APIFY_TOKEN;
-  const taskId = "UHpFz2Z3vzJHXUc4k";
+  const token = process.env.APIFY_TOKEN; // Make sure this is set in Vercel's environment variables
+  const taskId = "ZX1OMMUfGxjf5a6YF";
 
   if (!token) {
     return res.status(500).json({ error: "Missing APIFY_TOKEN in environment variables." });
@@ -12,7 +14,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const text = await response.text();
-      return res.status(response.status).json({ error: "Apify error", details: text });
+      return res.status(response.status).json({ error: "Apify YouTube fetch error", details: text });
     }
 
     const data = await response.json();
