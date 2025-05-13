@@ -299,7 +299,16 @@ async function loadYouTube() {
     const response = await fetch("/api/youtube");
     const data = await response.json();
 
-    const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
+    const isValidThumbnail = (url) => {
+  if (!url) return false;
+  return !url.includes("hqdefault.jpg") || !url.includes("https://i.ytimg.com/vi/") || !url.includes("/default.jpg");
+};
+
+const validVideos = data.filter(video => 
+  video.url &&
+  video.channelName &&
+  isValidThumbnail(video.thumbnailUrl)
+);
 
     if (!validVideos.length) {
       container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
