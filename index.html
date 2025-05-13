@@ -5,142 +5,191 @@
   <title>InfoWars - Live News</title>
   <meta name="theme-color" content="#1a202c" />
   <link rel="manifest" href="manifest.json" />
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
-    }
-    header {
-      background-color: #000;
-      color: white;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-    .hamburger {
-      cursor: pointer;
-      font-size: 1.4rem;
-    }
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: 60px;
-      right: 10px;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .dropdown a {
-      display: block;
-      padding: 10px;
-      color: black;
-      text-decoration: none;
-    }
-    .dropdown a:hover {
-      background-color: #f4f4f4;
-    }
-    .main-container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 10px;
-      gap: 20px;
-    }
-    .column {
-      flex: 1;
-      min-width: 300px;
-    }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .section-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #result, .video-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .news-item {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .news-text {
-      flex: 1;
-      font-size: 0.85rem;
-    }
-    .news-media {
-      width: 90px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-    }
-    .video-thumb {
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    .video-thumb img {
-      width: 100%;
-      display: block;
-    }
-    .video-thumb p {
-      margin: 5px;
-      font-size: 12px;
-      color: #333;
-    }
-    .ads {
-      background: #ff914d;
-      text-align: center;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 5px;
-      color: white;
-      margin: 20px 10px 10px;
-    }
-    .preview-strip {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 5px 0;
-    }
-    .preview-strip img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-  </style>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+  }
+
+  header {
+    background-color: #000;
+    color: white;
+    padding: 0.8rem 1rem 0 1rem;
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .home-btn a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.4rem;
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .logo-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .logo-slogan {
+    font-size: 0.7rem;
+    font-weight: normal;
+    color: #ccc;
+    margin-top: 2px;
+  }
+
+  .menu-btn {
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+
+  .dropdown {
+    display: none;
+    flex-direction: column;
+    background-color: #111;
+    margin-top: 5px;
+  }
+
+  .dropdown a {
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+  }
+
+  .dropdown a:hover {
+    background-color: #222;
+  }
+
+  .main-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 20px;
+  }
+
+  .column {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #result, .video-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .news-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .news-text {
+    flex: 1;
+    font-size: 0.85rem;
+  }
+
+  .news-media {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .video-thumb {
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .video-thumb img {
+    width: 100%;
+    display: block;
+  }
+
+  .video-thumb p {
+    margin: 5px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  .ads {
+    background: #ff914d;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    margin: 20px 10px 10px;
+  }
+
+  .preview-strip {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 5px 0;
+  }
+
+  .preview-strip img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+</style>
 </head>
 <body>
 <header>
-  <div class="logo">INFO WARS</div>
-  <div class="hamburger" onclick="toggleDropdown()">&#9776;</div>
-  <div id="dropdown" class="dropdown">
+  <div class="nav-bar">
+    <div class="home-btn">
+      <a href="/" title="Home">🏠</a>
+    </div>
+    <div class="logo">
+      <div class="logo-title">INFO WARS</div>
+      <div class="logo-slogan">All the news in one place</div>
+    </div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  </div>
+  <div class="dropdown" id="dropdownMenu">
     <a href="#">E-Newspaper 1</a>
     <a href="#">E-Newspaper 2</a>
   </div>
@@ -166,10 +215,10 @@
 </div>
 <div class="ads">ADVERTISEMENT</div>
 <script>
-function toggleDropdown() {
-  const dropdown = document.getElementById("dropdown");
-  dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-}
+  function toggleMenu() {
+    const menu = document.getElementById("dropdownMenu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  }
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
