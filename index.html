@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>InfoWars - Live News</title>
-  <meta name="theme-color" content="#1a202c" />
+  <meta name="theme-color" content="#000000" />
   <link rel="manifest" href="manifest.json" />
   <style>
     body {
@@ -14,13 +13,52 @@
       background: #f0f0f0;
     }
     header {
-      background-color: #004aad;
+      background-color: #000;
       color: white;
-      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      position: relative;
+    }
+    .brand {
       text-align: center;
+      flex: 1;
       font-size: 1.4rem;
       font-weight: bold;
     }
+    .brand small {
+      display: block;
+      font-size: 10px;
+      font-weight: normal;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 100%;
+      background: #111;
+      z-index: 1;
+    }
+    .dropdown a {
+      display: block;
+      padding: 10px;
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px solid #222;
+    }
+    .dropdown a:hover {
+      background: #222;
+    }
+
     .main-container {
       display: flex;
       flex-wrap: wrap;
@@ -45,6 +83,7 @@
       padding: 10px;
       border-radius: 8px;
       cursor: pointer;
+      color: white;
     }
     #result, .video-grid {
       display: flex;
@@ -109,16 +148,40 @@
       object-fit: cover;
       border-radius: 5px;
     }
+    .preview-strip div {
+      text-align: center;
+      font-size: 10px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
-<header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header>
+
+<header>
+  <button class="icon-btn" onclick="location.reload()">
+    &#8962;
+  </button>
+  <div class="brand">
+    INFO WARS
+    <small>All the news in one place</small>
+  </div>
+  <button class="icon-btn" onclick="toggleMenu()">
+    &#9776;
+  </button>
+  <div class="dropdown" id="menu">
+    <a href="https://guyanatimesgy.com/epaper/">Guyana Times ePaper</a>
+    <a href="https://www.kaieteurnewsonline.com/">Kaieteur News</a>
+    <a href="https://www.stabroeknews.com/">Stabroek News</a>
+    <a href="https://inewsguyana.com/">iNews Guyana</a>
+  </div>
+</header>
+
 <div class="main-container">
   <div class="column">
     <div 
       class="section-title" 
       onclick="toggleSection('facebook-section', 'facebook-preview')" 
-      style="color:white;background:#004aad;"
+      style="background:#004aad;"
     >FACEBOOK POSTS</div>
     <div id="facebook-preview" class="preview-strip"></div>
     <div id="facebook-section" style="display: none;">
@@ -130,7 +193,7 @@
     <div 
       class="section-title" 
       onclick="toggleSection('youtube-section', 'youtube-preview')" 
-      style="color:white;background:#e60039;"
+      style="background:#e60039;"
     >YOUTUBE CHANNELS</div>
     <div id="youtube-preview" class="preview-strip"></div>
     <div id="youtube-section" style="display: none;">
@@ -140,8 +203,14 @@
     </div>
   </div>
 </div>
+
 <div class="ads">ADVERTISEMENT</div>
+
 <script>
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
@@ -173,10 +242,7 @@ function renderPosts(data) {
     const thumb = post.media?.[0]?.thumbnail;
     const link = post.postUrl || post.url;
     const name = post.user?.name || "Unknown";
-    return thumb && link ? `<div style="text-align:center;">
-      <a href="${link}" target="_blank"><img src="${thumb}" /></a>
-      <div style="font-size:10px;">${name}</div>
-    </div>` : "";
+    return thumb && link ? `<div><a href="${link}" target="_blank"><img src="${thumb}" /></a><div>${name}</div></div>` : "";
   }).join("");
 
   resultBox.innerHTML = data.map(post => {
@@ -231,10 +297,7 @@ async function loadYouTube() {
     }
 
     previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
-      return `<div style="text-align:center;">
-        <a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a>
-        <div style="font-size:10px;">${video.channelName}</div>
-      </div>`;
+      return `<div><a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a><div>${video.channelName}</div></div>`;
     }).join("");
 
     container.innerHTML = validVideos.slice(0, 6).map(video => {
@@ -263,5 +326,6 @@ window.addEventListener("DOMContentLoaded", () => {
   loadYouTube();
 });
 </script>
+
 </body>
 </html>
