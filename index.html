@@ -182,13 +182,11 @@ async function loadYouTube() {
       video.thumbnail &&
       video.thumbnail.trim() !== "" &&
       video.channelName &&
-      video.channelName.trim() !== "" &&
-      video.title &&
-      video.title.trim() !== ""
+      video.channelName.trim() !== ""
     );
 
     container.innerHTML = filtered.slice(0, 6).map(video => {
-      const title = video.title;
+      const title = video.title || "Untitled Video";
       const url = video.url;
       const thumbnail = video.thumbnail;
       const channelName = video.channelName;
