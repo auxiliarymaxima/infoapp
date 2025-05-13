@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,6 +43,18 @@
       padding: 10px;
       border-radius: 8px;
       cursor: pointer;
+    }
+    .preview-strip {
+      display: flex;
+      gap: 5px;
+      padding: 5px 10px;
+      overflow-x: auto;
+    }
+    .preview-strip img {
+      height: 40px;
+      width: 40px;
+      border-radius: 4px;
+      object-fit: cover;
     }
     #result {
       display: flex;
@@ -98,44 +109,27 @@
   </style>
 </head>
 <body>
-  <header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header>
-
-<div class="main-container">
-  <!-- Facebook Posts Section -->
-  <div class="column">
-    <div 
-      class="section-title" 
-      onclick="toggleSection('facebook-section')" 
-      style="color:white;background:#004aad;padding:10px;border-radius:8px;cursor:pointer;"
-    >
-      FACEBOOK POSTS
-    </div>
-    <div id="facebook-section" style="display: none;">
-      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
-      <div id="result"></div>
-    </div>
-  </div>
-
-  <!-- YouTube Videos Section -->
-  <div class="column">
-    <div 
-      class="section-title" 
-      onclick="toggleSection('youtube-section')" 
-      style="color:white;background:#e60039;padding:10px;border-radius:8px;cursor:pointer;"
-    >
-      YOUTUBE CHANNELS
-    </div>
-    <div id="youtube-section" style="display: none;">
-      <div class="video-grid" id="youtube-feed">
-        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
+  <header>INFO WARS 🎧 <span style="color: red;">LIVE NEWS</span></header>  <div class="main-container">
+    <!-- Facebook Posts Section -->
+    <div class="column">
+      <div class="section-title" onclick="toggleSection('facebook-section')" style="background:#004aad; color:white;">FACEBOOK POSTS</div>
+      <div id="facebook-preview" class="preview-strip"></div>
+      <div id="facebook-section" style="display: none;">
+        <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+        <div id="result"></div>
       </div>
+    </div><!-- YouTube Videos Section -->
+<div class="column">
+  <div class="section-title" onclick="toggleSection('youtube-section')" style="background:#e60039; color:white;">YOUTUBE CHANNELS</div>
+  <div id="youtube-preview" class="preview-strip"></div>
+  <div id="youtube-section" style="display: none;">
+    <div class="video-grid" id="youtube-feed">
+      <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
     </div>
   </div>
 </div>
-  
-  <div class="ads">ADVERTISEMENT</div>
 
-  <script>
+  </div>  <div class="ads">ADVERTISEMENT</div>  <script>
     function toggleSection(id) {
       const section = document.getElementById(id);
       section.style.display = section.style.display === "none" ? "block" : "none";
@@ -158,6 +152,12 @@
       }
 
       statusBox.innerText = `Showing latest posts`;
+
+      // Previews
+      const previewBox = document.getElementById("facebook-preview");
+      const thumbs = data.filter(post => post.media?.[0]?.thumbnail).slice(0, 5)
+        .map(post => `<img src="${post.media[0].thumbnail}" alt="Preview">`).join("");
+      previewBox.innerHTML = thumbs || "<p style='font-size:12px;color:gray;'>No preview available</p>";
 
       resultBox.innerHTML = data.map(post => {
         const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
@@ -198,6 +198,7 @@
 
     async function loadYouTube() {
       const container = document.querySelector(".video-grid");
+      const ytPreviewBox = document.getElementById("youtube-preview");
       try {
         const response = await fetch("/api/youtube");
         const data = await response.json();
@@ -208,6 +209,8 @@
           container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
           return;
         }
+
+        ytPreviewBox.innerHTML = validVideos.slice(0, 5).map(video => `<img src="${video.thumbnailUrl}" alt="YT Preview">`).join("");
 
         container.innerHTML = validVideos.slice(0, 6).map(video => {
           const title = video.title || "Untitled Video";
@@ -225,22 +228,14 @@
             </div>
           `;
         }).join("");
-
       } catch (err) {
         container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
       }
     }
-  
 
     window.addEventListener("DOMContentLoaded", () => {
       loadNews();
       loadYouTube();
     });
-
-    function toggleSection(id) {
-  const section = document.getElementById(id);
-  section.style.display = section.style.display === "none" ? "block" : "none";
-    }
-  </script>
-</body>
+  </script></body>
 </html>
