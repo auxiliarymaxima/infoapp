@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -41,6 +40,7 @@
       font-size: 1.2rem;
       font-weight: bold;
       margin: 10px 0;
+      position: relative;
     }
     #result {
       display: flex;
@@ -68,20 +68,10 @@
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
     }
-    .video-thumb {
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
     .video-thumb img {
       width: 100%;
       display: block;
-    }
-    .video-thumb p {
-      margin: 5px;
-      font-size: 12px;
-      color: #333;
+      border-radius: 8px;
     }
     .ads {
       background: #ff914d;
@@ -92,29 +82,43 @@
       color: white;
       margin: 20px 10px 10px;
     }
+    .toggle-btn {
+      background-color: #333;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      font-size: 12px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .toggle-btn:hover {
+      background-color: #555;
+    }
   </style>
 </head>
 <body>
-  <header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header>
-
-  <div class="main-container">
+  <header>INFO WARS 🎮 <span style="color: red;">LIVE NEWS</span></header>  <div class="main-container">
     <div class="column">
-      <div class="section-title" style="color:white;background:#004aad;padding:10px;border-radius:8px;">FACEBOOK POSTS</div>
+      <div class="section-title" style="color:white;background:#004aad;padding:10px;border-radius:8px;">
+        FACEBOOK POSTS
+        <button class="toggle-btn" onclick="toggleSection('result')">Toggle</button>
+      </div>
       <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
       <div id="result"></div>
-    </div>
-
-    <div class="column">
-      <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">YouTube Channels</div>
-      <div class="video-grid" id="youtube-feed">
-        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
-      </div>
-    </div>
+    </div><div class="column">
+  <div class="section-title" style="color:white;background:#e60039;padding:10px;border-radius:8px;">
+    YouTube Channels
+    <button class="toggle-btn" onclick="toggleSection('youtube-feed')">Toggle</button>
   </div>
+  <div class="video-grid" id="youtube-feed">
+    <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
+  </div>
+</div>
 
-  <div class="ads">ADVERTISEMENT</div>
-
-  <script>
+  </div>  <div class="ads">ADVERTISEMENT</div>  <script>
     const datasetUrl = "/api/news";
 
     function truncate(text, maxLength) {
@@ -170,45 +174,51 @@
       }
     }
 
-async function loadYouTube() {
-  const container = document.querySelector(".video-grid");
-  try {
-    const response = await fetch("/api/youtube");
-    const data = await response.json();
+    async function loadYouTube() {
+      const container = document.querySelector(".video-grid");
+      try {
+        const response = await fetch("/api/youtube");
+        const data = await response.json();
+        const validVideos = data.filter(video => video.thumbnailUrl && video.url);
 
-    // Filter videos that have both thumbnail and URL
-    const validVideos = data.filter(video => video.thumbnailUrl && video.url);
+        if (!validVideos.length) {
+          container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
+          return;
+        }
 
-    if (!validVideos.length) {
-      container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
-      return;
+        container.innerHTML = validVideos.slice(0, 6).map(video => {
+          const title = video.title || "Untitled Video";
+          const url = video.url;
+          const thumbnail = video.thumbnailUrl;
+          const channel = video.channelName || "Unknown Channel";
+
+          return `
+            <div class="video-thumb">
+              <a href="${url}" target="_blank">
+                <img src="${thumbnail}" alt="YouTube thumbnail">
+              </a>
+              <p style="font-weight: bold; font-size: 13px; margin: 5px 0 0;">${channel}</p>
+              <p style="font-size: 12px; margin-top: 2px;">${title}</p>
+            </div>
+          `;
+        }).join("");
+      } catch (err) {
+        container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+      }
     }
 
-    container.innerHTML = validVideos.slice(0, 6).map(video => {
-      const title = video.title || "Untitled Video";
-      const url = video.url;
-      const thumbnail = video.thumbnailUrl;
-      const channel = video.channelName || "Unknown Channel";
-
-      return `
-        <div style="width: 100%;">
-          <a href="${url}" target="_blank">
-            <img src="${thumbnail}" alt="YouTube thumbnail" style="width: 100%; border-radius: 8px;">
-          </a>   
-          <p style="font-weight: bold; font-size: 13px; margin: 5px 0 0;">${channel}</p>
-          <p style="font-size: 12px; margin-top: 2px;">${title}</p>
-        </div>
-      `;
-    }).join("");
-  } catch (err) {
-    container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
-  }
-}
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      if (section.style.display === "none") {
+        section.style.display = "block";
+      } else {
+        section.style.display = "none";
+      }
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
       loadNews();
       loadYouTube();
     });
-  </script>
-</body>
+  </script></body>
 </html>
