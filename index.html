@@ -101,22 +101,36 @@
   <header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header>
 
 <div class="main-container">
-    <div class="column">
-      <div class="section-title" style="background:#004aad; color:white;" onclick="toggleSection('facebook-section')">FACEBOOK POSTS</div>
-      <div id="facebook-section">
-        <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
-        <div id="result"></div>
-      </div>
+  <!-- Facebook Posts Section -->
+  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('facebook-section')" 
+      style="color:white;background:#004aad;padding:10px;border-radius:8px;cursor:pointer;"
+    >
+      FACEBOOK POSTS
     </div>
+    <div id="facebook-section" style="display: none;">
+      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+      <div id="result"></div>
+    </div>
+  </div>
 
-    <div class="column">
-      <div class="section-title" style="background:#e60039; color:white;" onclick="toggleSection('youtube-section')">YOUTUBE CHANNELS</div>
-      <div id="youtube-section">
-        <div class="video-grid" id="youtube-feed">
-          <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
-        </div>
+  <!-- YouTube Videos Section -->
+  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('youtube-section')" 
+      style="color:white;background:#e60039;padding:10px;border-radius:8px;cursor:pointer;"
+    >
+      YOUTUBE CHANNELS
+    </div>
+    <div id="youtube-section" style="display: none;">
+      <div class="video-grid" id="youtube-feed">
+        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
       </div>
     </div>
+  </div>
 </div>
   
   <div class="ads">ADVERTISEMENT</div>
@@ -216,11 +230,17 @@
         container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
       }
     }
+  
 
     window.addEventListener("DOMContentLoaded", () => {
       loadNews();
       loadYouTube();
     });
+
+    function toggleSection(id) {
+  const section = document.getElementById(id);
+  section.style.display = section.style.display === "none" ? "block" : "none";
+    }
   </script>
 </body>
 </html>
