@@ -38,25 +38,55 @@
       color: white;
       font-size: 20px;
       cursor: pointer;
+      z-index: 1010;
     }
+    #menu-toggle {
+      display: none;
+    }
+
     .dropdown {
       display: none;
       position: absolute;
       top: 100%;
+      left: 0;
       right: 0;
-      width: 100%;
       background: #111;
-      z-index: 1;
+      z-index: 1000;
+      border-top: 1px solid #333;
+      padding: 10px 15px;
     }
-    .dropdown a {
+    #menu-toggle:checked ~ .dropdown {
       display: block;
-      padding: 10px;
-      color: white;
-      text-decoration: none;
-      border-bottom: 1px solid #222;
     }
-    .dropdown a:hover {
+
+    .menu-header {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .epaper-links {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+    }
+
+    .epaper-links a {
+      white-space: nowrap;
       background: #222;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .epaper-links a:hover {
+      background: #333;
     }
 
     .main-container {
@@ -153,76 +183,16 @@
       font-size: 10px;
       color: #333;
     }
-    
     footer {
-  background-color: #000;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  font-size: 12px;
-  position: relative;
-  bottom: 0;
-  width: 100%;
+      background-color: #000;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 12px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
     }
-    /* Dropdown Menu */
-#menu-toggle:checked ~ .dropdown {
-  display: block;
-}
-
-.menu-header {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  border-bottom: 1px solid #333;
-  background: #111;
-}
-
-/* Dropdown Links */
-.dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  background: #111;
-  z-index: 1000;
-  border-top: 1px solid #333;
-}
-
-.dropdown a {
-  display: block;
-  padding: 12px 15px;
-  color: white;
-  text-decoration: none;
-  font-size: 0.95rem;
-  border-bottom: 1px solid #222;
-  transition: background 0.3s;
-}
-
-.dropdown a:hover {
-  background: #222;
-}
-
-/* Improve icon alignment on header */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  background-color: #000;
-  color: white;
-  position: relative;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 1010;
-}
   </style>
 </head>
 <body>
@@ -235,18 +205,19 @@ header {
     INFO WARS GY
     <small>All the news in one place</small>
   </div>
-  <input type="checkbox" id="menu-toggle" style="display: none;" />
+  <input type="checkbox" id="menu-toggle" />
   <label for="menu-toggle" class="icon-btn">&#9776;</label>
 
-  <div class="dropdown" id="menu-content">
+  <div class="dropdown">
     <div class="menu-header">EPapers</div>
-    <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
-    <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
-    <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
-    <a href="https://guyanachronicle.com/" target="_blank">Guyana Chronicle</a>
+    <div class="epaper-links">
+      <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
+      <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
+      <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
+      <a href="https://guyanachronicle.com/" target="_blank">Chronicle</a>
+    </div>
   </div>
 </header>
-
 
 <div class="main-container">
   <div class="column">
@@ -279,10 +250,6 @@ header {
 <div class="ads">ADVERTISEMENT</div>
 
 <script>
-function toggleMenu() {
-  const menu = document.getElementById("menu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
@@ -393,8 +360,9 @@ window.addEventListener("DOMContentLoaded", () => {
   loadYouTube();
 });
 </script>
-  <footer>
+
+<footer>
   © 2025 InfoWarsGY. All rights reserved.
-  </footer>
+</footer>
 </body>
 </html>
