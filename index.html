@@ -299,7 +299,11 @@ async function loadYouTube() {
     const response = await fetch("/api/youtube");
     const data = await response.json();
 
-    const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
+    const validVideos = data.filter(video => {
+  const hasThumbs = video.video?.scrubber_preview_thumbnail_information?.has_preview_thumbnails;
+  const isThumbnailValid = video.thumbnailUrl && !video.thumbnailUrl.includes("default.jpg");
+  return hasThumbs !== false && isThumbnailValid && video.url && video.channelName;
+});
     
     previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
       return `<div><a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a><div>${video.channelName}</div></div>`;
