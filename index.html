@@ -193,6 +193,38 @@
       bottom: 0;
       width: 100%;
     }
+    .epaper-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 15px;
+  background: #111;
+}
+
+.epaper-bar .menu-header {
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  flex-shrink: 0;
+}
+
+.epaper-bar a {
+  white-space: nowrap;
+  background: #222;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.epaper-bar a:hover {
+  background: #333;
+}
   </style>
 </head>
 <body>
@@ -209,13 +241,13 @@
   <label for="menu-toggle" class="icon-btn">&#9776;</label>
 
   <div class="dropdown">
-    <div class="menu-header">EPapers</div>
-    <div class="epaper-links">
-      <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
-      <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
-      <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
-      <a href="https://guyanachronicle.com/" target="_blank">Chronicle</a>
-    </div>
+  <div class="epaper-bar">
+    <span class="menu-header">EPapers:</span>
+    <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
+    <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
+    <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
+    <a href="https://guyanachronicle.com/" target="_blank">Chronicle</a>
+  </div>
   </div>
 </header>
 
