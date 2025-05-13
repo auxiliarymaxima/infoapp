@@ -44,19 +44,7 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    .preview-strip {
-      display: flex;
-      gap: 5px;
-      padding: 5px 10px;
-      overflow-x: auto;
-    }
-    .preview-strip img {
-      height: 40px;
-      width: 40px;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-    #result {
+    #result, .video-grid {
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -106,136 +94,160 @@
       color: white;
       margin: 20px 10px 10px;
     }
+    .preview-strip {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 5px 0;
+    }
+    .preview-strip img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-  <header>INFO WARS 🎧 <span style="color: red;">LIVE NEWS</span></header>  <div class="main-container">
-    <!-- Facebook Posts Section -->
-    <div class="column">
-      <div class="section-title" onclick="toggleSection('facebook-section')" style="background:#004aad; color:white;">FACEBOOK POSTS</div>
-      <div id="facebook-preview" class="preview-strip"></div>
-      <div id="facebook-section" style="display: none;">
-        <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
-        <div id="result"></div>
+<header>INFO WARS 📺 <span style="color: red;">LIVE NEWS</span></header><div class="main-container">
+  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('facebook-section', 'facebook-preview')" 
+      style="color:white;background:#004aad;"
+    >FACEBOOK POSTS</div>
+    <div id="facebook-preview" class="preview-strip"></div>
+    <div id="facebook-section" style="display: none;">
+      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+      <div id="result"></div>
+    </div>
+  </div>  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('youtube-section', 'youtube-preview')" 
+      style="color:white;background:#e60039;"
+    >YOUTUBE CHANNELS</div>
+    <div id="youtube-preview" class="preview-strip"></div>
+    <div id="youtube-section" style="display: none;">
+      <div class="video-grid" id="youtube-feed">
+        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
       </div>
-    </div><!-- YouTube Videos Section -->
-<div class="column">
-  <div class="section-title" onclick="toggleSection('youtube-section')" style="background:#e60039; color:white;">YOUTUBE CHANNELS</div>
-  <div id="youtube-preview" class="preview-strip"></div>
-  <div id="youtube-section" style="display: none;">
-    <div class="video-grid" id="youtube-feed">
-      <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
     </div>
   </div>
-</div>
+</div><div class="ads">ADVERTISEMENT</div><script>
+function toggleSection(sectionId, previewId) {
+  const section = document.getElementById(sectionId);
+  const preview = document.getElementById(previewId);
+  const isVisible = section.style.display === 'block';
+  section.style.display = isVisible ? 'none' : 'block';
+  preview.style.display = isVisible ? 'flex' : 'none';
+}
 
-  </div>  <div class="ads">ADVERTISEMENT</div>  <script>
-    function toggleSection(id) {
-      const section = document.getElementById(id);
-      section.style.display = section.style.display === "none" ? "block" : "none";
-    }
+const datasetUrl = "/api/news";
 
-    const datasetUrl = "/api/news";
+function truncate(text, maxLength) {
+  return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
+}
 
-    function truncate(text, maxLength) {
-      return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
-    }
+function renderPosts(data) {
+  const resultBox = document.getElementById("result");
+  const statusBox = document.getElementById("status");
+  const previewBox = document.getElementById("facebook-preview");
 
-    function renderPosts(data) {
-      const resultBox = document.getElementById("result");
-      const statusBox = document.getElementById("status");
+  if (!data.length) {
+    statusBox.innerText = "No posts found.";
+    resultBox.innerHTML = "";
+    return;
+  }
 
-      if (!data.length) {
-        statusBox.innerText = "No posts found.";
-        resultBox.innerHTML = "";
-        return;
-      }
+  statusBox.innerText = `Showing latest posts`;
 
-      statusBox.innerText = `Showing latest posts`;
+  previewBox.innerHTML = data.slice(0, 6).map(post => {
+    const thumb = post.media?.[0]?.thumbnail;
+    const link = post.postUrl || post.url;
+    return thumb && link ? `<a href="${link}" target="_blank"><img src="${thumb}" /></a>` : "";
+  }).join("");
 
-      // Previews
-      const previewBox = document.getElementById("facebook-preview");
-      const thumbs = data.filter(post => post.media?.[0]?.thumbnail).slice(0, 5)
-        .map(post => `<img src="${post.media[0].thumbnail}" alt="Preview">`).join("");
-      previewBox.innerHTML = thumbs || "<p style='font-size:12px;color:gray;'>No preview available</p>";
+  resultBox.innerHTML = data.map(post => {
+    const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
+    const displayName = post.user?.name || "Unknown Page";
+    const mediaThumbnail = post.media?.[0]?.thumbnail;
+    const mediaUrl = post.postUrl || post.url;
 
-      resultBox.innerHTML = data.map(post => {
-        const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
-        const displayName = post.user?.name || "Unknown Page";
-        const mediaThumbnail = post.media?.[0]?.thumbnail;
-        const mediaUrl = post.postUrl || post.url;
+    const mediaHTML = mediaThumbnail && mediaUrl
+      ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
+      : "";
 
-        const mediaHTML = mediaThumbnail && mediaUrl
-          ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
-          : "";
-
-        return `
-          <div class="card">
-            <div class="news-item">
-              <div class="news-text">
-                <h3>${displayName}</h3>
-                <p>${truncate(post.text || "...", 200)}</p>
-                <p style="font-size: 0.75rem; color: gray;">${readableDate}</p>
-                ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
-              </div>
-              ${mediaHTML}
-            </div>
+    return `
+      <div class="card">
+        <div class="news-item">
+          <div class="news-text">
+            <h3>${displayName}</h3>
+            <p>${truncate(post.text || "...", 200)}</p>
+            <p style="font-size: 0.75rem; color: gray;">${readableDate}</p>
+            ${mediaUrl ? `<a href="${mediaUrl}" target="_blank">View Original Post</a>` : ""}
           </div>
-        `;
-      }).join("");
+          ${mediaHTML}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function loadNews() {
+  const statusBox = document.getElementById("status");
+  try {
+    const response = await fetch(datasetUrl);
+    const data = await response.json();
+    renderPosts(data);
+  } catch (error) {
+    statusBox.innerText = "Failed to load news: " + error.message;
+  }
+}
+
+async function loadYouTube() {
+  const container = document.querySelector(".video-grid");
+  const previewBox = document.getElementById("youtube-preview");
+  try {
+    const response = await fetch("/api/youtube");
+    const data = await response.json();
+
+    const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
+
+    if (!validVideos.length) {
+      container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
+      return;
     }
 
-    async function loadNews() {
-      const statusBox = document.getElementById("status");
-      try {
-        const response = await fetch(datasetUrl);
-        const data = await response.json();
-        renderPosts(data);
-      } catch (error) {
-        statusBox.innerText = "Failed to load news: " + error.message;
-      }
-    }
+    previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
+      return `<a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a>`;
+    }).join("");
 
-    async function loadYouTube() {
-      const container = document.querySelector(".video-grid");
-      const ytPreviewBox = document.getElementById("youtube-preview");
-      try {
-        const response = await fetch("/api/youtube");
-        const data = await response.json();
+    container.innerHTML = validVideos.slice(0, 6).map(video => {
+      const title = video.title || "Untitled Video";
+      const url = video.url;
+      const thumbnail = video.thumbnailUrl;
+      const channel = video.channelName;
 
-        const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
+      return `
+        <div class="video-thumb">
+          <a href="${url}" target="_blank">
+            <img src="${thumbnail}" alt="YouTube thumbnail">
+          </a>
+          <p style="font-weight: bold;">${channel}</p>
+          <p>${title}</p>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
+  }
+}
 
-        if (!validVideos.length) {
-          container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
-          return;
-        }
-
-        ytPreviewBox.innerHTML = validVideos.slice(0, 5).map(video => `<img src="${video.thumbnailUrl}" alt="YT Preview">`).join("");
-
-        container.innerHTML = validVideos.slice(0, 6).map(video => {
-          const title = video.title || "Untitled Video";
-          const url = video.url;
-          const thumbnail = video.thumbnailUrl;
-          const channel = video.channelName;
-
-          return `
-            <div class="video-thumb">
-              <a href="${url}" target="_blank">
-                <img src="${thumbnail}" alt="YouTube thumbnail">
-              </a>
-              <p style="font-weight: bold;">${channel}</p>
-              <p>${title}</p>
-            </div>
-          `;
-        }).join("");
-      } catch (err) {
-        container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
-      }
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      loadNews();
-      loadYouTube();
-    });
-  </script></body>
+window.addEventListener("DOMContentLoaded", () => {
+  loadNews();
+  loadYouTube();
+});
+</script></body>
 </html>
