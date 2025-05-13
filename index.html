@@ -304,17 +304,11 @@ async function loadYouTube() {
   return !url.includes("hqdefault.jpg") || !url.includes("https://i.ytimg.com/vi/") || !url.includes("/default.jpg");
 };
 
-const isPlaceholder = url =>
-  url.includes("default.jpg") || 
-  url.includes("no_thumbnail") || 
-  url.includes("/hqdefault.jpg") && url.includes("vi_webp/");
-
-const validVideos = data.filter(video =>
-  video.url &&
-  video.channelName &&
-  video.thumbnailUrl &&
-  !isPlaceholder(video.thumbnailUrl)
-);
+const validVideos = data.filter(video => {
+  const isUnavailable = !video.title || video.title.toLowerCase().includes("private");
+  const isThumbnailBroken = !video.thumbnailUrl || video.thumbnailUrl.includes("default.jpg");
+  return !isUnavailable && !isThumbnailBroken && video.url && video.channelName;
+});
     if (!validVideos.length) {
       container.innerHTML = `<p style="color:red;">No valid videos to display.</p>`;
       return;
