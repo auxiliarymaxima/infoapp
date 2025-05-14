@@ -293,36 +293,43 @@
 <body>
 
 <header>
+  <!-- Home button -->
   <div class="menu-toggle-container">
-  <button class="icon-btn" onclick="location.reload()">&#8962;</button>
-  <div class="menu-label">Home</div>
-</div>
-  <div class="brand">
-  INFO WARS 
-  <span class="guyana-letters">
-    <span class="g1">G</span>
-    <span class="g2">U</span>
-    <span class="g3">Y</span>
-    <span class="g4">A</span>
-    <span class="g5">N</span>
-    <span class="g6">A</span>
-  </span>
-  <small>All the news in one place</small>
-  <input type="checkbox" id="menu-toggle" />
-  <label for="menu-toggle" class="icon-btn">&#9776;</label>
-  <div class="menu-label">EPapers</div>
+    <button class="icon-btn" onclick="location.reload()">&#8962;</button>
+    <div class="menu-label">Home</div>
   </div>
 
-  <div class="dropdown">
-  <div class="epaper-bar">
-    <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
-    <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
-    <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
-    <a href="https://guyanachronicle.com/" target="_blank">Chronicle</a>
+  <!-- Brand section -->
+  <div class="brand">
+    INFO WARS 
+    <span class="guyana-letters">
+      <span class="g1">G</span>
+      <span class="g2">U</span>
+      <span class="g3">Y</span>
+      <span class="g4">A</span>
+      <span class="g5">N</span>
+      <span class="g6">A</span>
+    </span>
+    <small>All the news in one place</small>
   </div>
+
+  <!-- EPapers toggle with dropdown correctly positioned -->
+  <div class="menu-toggle-container">
+    <input type="checkbox" id="menu-toggle" />
+    <label for="menu-toggle" class="icon-btn">&#9776;</label>
+    <div class="menu-label">EPapers</div>
+
+    <!-- Moved dropdown here so it is a sibling of #menu-toggle -->
+    <div class="dropdown">
+      <div class="epaper-bar">
+        <a href="https://guyanatimesgy.com/#1476250725008-f5228161-9a6d" target="_blank">Guyana Times</a>
+        <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
+        <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
+        <a href="https://guyanachronicle.com/" target="_blank">Chronicle</a>
+      </div>
+    </div>
   </div>
 </header>
-
 <div class="main-container">
   <div class="column">
     <div 
