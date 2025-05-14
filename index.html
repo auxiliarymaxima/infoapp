@@ -448,12 +448,13 @@ async function loadNews() {
 async function loadYouTube() {
   const container = document.querySelector(".video-grid");
   const previewBox = document.getElementById("youtube-preview");
+  const statusBox = document.getElementById("youtube-status");
   try {
     const response = await fetch("/api/youtube");
     const data = await response.json();
 
     const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
-
+statusBox.innerText = "Showing latest videos";
     previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
       return `<div><a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a><div>${video.channelName}</div></div>`;
     }).join("");
