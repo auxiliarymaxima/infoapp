@@ -485,30 +485,22 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
-let deferredPrompt;
-const installBanner = document.getElementById('install-banner');
-const installBtn = document.getElementById('install-btn');
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
 
-// Listen for the beforeinstallprompt event
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); // Prevent automatic prompt
-  deferredPrompt = e;
-  installBanner.style.display = 'block'; // Show custom banner
-});
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
 
-// Handle button click
-installBtn?.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    console.log('User accepted the install prompt');
-    installBanner.style.display = 'none';
-  } else {
-    console.log('User dismissed the install prompt');
-  }
-  deferredPrompt = null;
-});
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    });
+  });
 
   if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
