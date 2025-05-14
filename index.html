@@ -234,19 +234,45 @@
   margin-left: 5px;
 }
 
-.g1 { color: #d9272e; }     /* Red - for the G */
-.g2 { color: #ffcb05; }     /* Gold - U */
-.g3 { color: #111; 
-      background: linear-gradient(to top right, #111 50%, transparent 50%);
-      color: #ffcb05; 
-}                           /* Black/Yellow combo Y */
-.g4 { color: #ffcb05; }     /* Gold - A */
-.g5 { color: #ffffff; 
-      background: linear-gradient(to right, green 50%, white 50%);
-      -webkit-background-clip: text;
-      color: transparent;
-}                           /* White + green mix N */
-.g6 { color: #2bb673; }     /* Green - A */
+/* G - Red */
+.g1 {
+  color: #d9272e;
+}
+
+/* U - Half Red, Half Gold */
+.g2 {
+  background: linear-gradient(to right, #d9272e 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Y - Black & Gold diagonal, mimicking the triangle split */
+.g3 {
+  background: linear-gradient(to top left, #111 45%, #ffcb05 55%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* A - Half White, Half Gold (vertical) */
+.g4 {
+  background: linear-gradient(to right, white 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* N - Half Green, Half White (reused from previous) */
+.g5 {
+  background: linear-gradient(to right, #2bb673 50%, white 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* A - Diagonal Green and Gold */
+.g6 {
+  background: linear-gradient(to bottom right, #2bb673 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
   </style>
 </head>
 <body>
