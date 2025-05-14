@@ -485,12 +485,44 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
+let deferredPrompt;
+const installBanner = document.getElementById('install-banner');
+const installBtn = document.getElementById('install-btn');
+
+// Listen for the beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); // Prevent automatic prompt
+  deferredPrompt = e;
+  installBanner.style.display = 'block'; // Show custom banner
+});
+
+// Handle button click
+installBtn?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    console.log('User accepted the install prompt');
+    installBanner.style.display = 'none';
+  } else {
+    console.log('User dismissed the install prompt');
+  }
+  deferredPrompt = null;
+});
+
+  
 window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
 });
 </script>
-
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log("Service Worker registered"))
+    .catch(err => console.error("Service Worker error:", err));
+}
+</script>
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
 </footer>
