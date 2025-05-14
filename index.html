@@ -273,6 +273,21 @@
   -webkit-background-clip: text;
   color: transparent;
 }
+    .menu-toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -5px;
+  z-index: 1010;
+}
+
+.menu-toggle-container .menu-label {
+  font-size: 10px;
+  color: white;
+  margin-top: 2px;
+  font-weight: normal;
+  opacity: 0.8;
+}
   </style>
 </head>
 <body>
@@ -293,9 +308,11 @@
   </span>
   <small>All the news in one place</small>
   </div>
-  <span class="menu-header">EPapers:</span>
+  <div class="menu-toggle-container">
   <input type="checkbox" id="menu-toggle" />
   <label for="menu-toggle" class="icon-btn">&#9776;</label>
+  <div class="menu-label">EPapers</div>
+  </div>
 
   <div class="dropdown">
   <div class="epaper-bar">
