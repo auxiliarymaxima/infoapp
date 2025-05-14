@@ -361,7 +361,7 @@ body > main {
       style="background:#e60039;"
     >YOUTUBE News</div>
     <div id="youtube-preview" class="preview-strip"></div>
-    <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest videos...</div>
+    <div id="youtube-status" class="section-message" style="text-align:center; font-style:italic; margin: 10px 0;"></div>
     <div id="youtube-section" style="display: none;">
       <div class="video-grid" id="youtube-feed">
         <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
@@ -447,11 +447,19 @@ async function loadNews() {
 async function loadYouTube() {
   const container = document.querySelector(".video-grid");
   const previewBox = document.getElementById("youtube-preview");
+  const statusBox = document.getElementById("youtube-status"); // NEW
+
   try {
     const response = await fetch("/api/youtube");
     const data = await response.json();
 
     const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
+
+    if (validVideos.length) {
+      statusBox.innerText = "Showing latest videos"; // NEW
+    } else {
+      statusBox.innerText = "No videos found"; // NEW
+    }
 
     previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
       return `<div><a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a><div>${video.channelName}</div></div>`;
@@ -474,6 +482,7 @@ async function loadYouTube() {
       `;
     }).join("");
   } catch (err) {
+    statusBox.innerText = "Failed to load videos"; // NEW
     container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
   }
 }
