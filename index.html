@@ -433,17 +433,6 @@ function renderPosts(data) {
   }).join("");
 }
 
-async function loadNews() {
-  const statusBox = document.getElementById("status");
-  try {
-    const response = await fetch(datasetUrl);
-    const data = await response.json();
-    renderPosts(data);
-  } catch (error) {
-    statusBox.innerText = "Failed to load news: " + error.message;
-  }
-}
-
 async function loadYouTube() {
   const container = document.querySelector(".video-grid");
   const previewBox = document.getElementById("youtube-preview");
