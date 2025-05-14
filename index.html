@@ -225,6 +225,28 @@
 .epaper-bar a:hover {
   background: #333;
 }
+
+    .guyana-letters {
+  display: inline-flex;
+  font-weight: bold;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-left: 5px;
+}
+
+.g1 { color: #d9272e; }     /* Red - for the G */
+.g2 { color: #ffcb05; }     /* Gold - U */
+.g3 { color: #111; 
+      background: linear-gradient(to top right, #111 50%, transparent 50%);
+      color: #ffcb05; 
+}                           /* Black/Yellow combo Y */
+.g4 { color: #ffcb05; }     /* Gold - A */
+.g5 { color: #ffffff; 
+      background: linear-gradient(to right, green 50%, white 50%);
+      -webkit-background-clip: text;
+      color: transparent;
+}                           /* White + green mix N */
+.g6 { color: #2bb673; }     /* Green - A */
   </style>
 </head>
 <body>
@@ -234,8 +256,16 @@
     &#8962;
   </button>
   <div class="brand">
-    INFO WARS GY
-    <small>All the news in one place</small>
+  INFO WARS 
+  <span class="guyana-letters">
+    <span class="g1">G</span>
+    <span class="g2">U</span>
+    <span class="g3">Y</span>
+    <span class="g4">A</span>
+    <span class="g5">N</span>
+    <span class="g6">A</span>
+  </span>
+  <small>All the news in one place</small>
   </div>
   <input type="checkbox" id="menu-toggle" />
   <label for="menu-toggle" class="icon-btn">&#9776;</label>
