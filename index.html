@@ -510,18 +510,16 @@ installBtn?.addEventListener('click', async () => {
   deferredPrompt = null;
 });
 
+  if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log("Service Worker registered"))
+    .catch(err => console.error("Service Worker error:", err));
+  }
   
 window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
 });
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.error("Service Worker error:", err));
-}
 </script>
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
