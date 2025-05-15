@@ -488,43 +488,22 @@ statusBox.innerText = "Showing latest videos";
   loadNews();
   loadYouTube();
 
-  let deferredPrompt;
-  const installBanner = document.getElementById('install-banner');
-  const installBtn = document.getElementById('install-btn');
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
 
-  // Test if event fires
-  window.addEventListener('beforeinstallprompt', (e) => {
-    alert("✅ beforeinstallprompt fired");
-    e.preventDefault();
-    deferredPrompt = e;
-    installBanner.style.display = 'flex';
+window.addEventListener('beforeinstallprompt', (e) => {
+  alert("beforeinstallprompt fired");
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
 
-    setTimeout(() => {
-      installBanner.style.display = 'none';
-    }, 10000);
-  });
-
-  installBtn?.addEventListener('click', async () => {
-    alert("Install button clicked");
-    if (!deferredPrompt) {
-      alert("❌ No deferredPrompt available");
-      return;
-    }
-
+  installBtn.addEventListener('click', () => {
+    installBtn.style.display = 'none';
     deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    alert("User choice: " + result.outcome);
-
-    if (result.outcome === 'accepted') {
-      installBanner.style.display = 'none';
-      alert("✅ App installed");
-    }
-
-    deferredPrompt = null;
-  });
-
-  window.addEventListener('appinstalled', () => {
-    alert("✅ App was installed (confirmed)");
+    deferredPrompt.userChoice.then(choiceResult => {
+      alert("User choice: " + choiceResult.outcome);
+      deferredPrompt = null;
+    });
   });
 });
 
