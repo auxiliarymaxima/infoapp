@@ -339,6 +339,7 @@ body > main {
     </div>
   </div>
 </header>
+  <button id="installBtn" style="display: none;">Install App</button>
   <main>
 <div class="main-container">
   <div class="column">
@@ -478,6 +479,35 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
+  
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isPWA) {
+      window.location.href = "https://ezf0k1-ng.myshopify.com/";
+    } else {
+      let deferredPrompt;
+      const installBtn = document.getElementById('installBtn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'inline-block';
+
+        installBtn.addEventListener('click', () => {
+          installBtn.style.display = 'none';
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => {
+            deferredPrompt = null;
+          });
+        });
+      });
+    }
+
+  
 window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
