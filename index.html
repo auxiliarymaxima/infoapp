@@ -32,7 +32,7 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/pwa/service-worker.js');
+      navigator.serviceWorker.register('/service-worker.js');
     }
 
     const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
