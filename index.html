@@ -485,7 +485,12 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
- window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("DOMContentLoaded", () => {
+  // Load content
+  loadNews();
+  loadYouTube();
+
+  // Handle install banner
   let deferredPrompt;
   const installBanner = document.getElementById('install-banner');
   const installBtn = document.getElementById('install-btn');
@@ -519,17 +524,8 @@ statusBox.innerText = "Showing latest videos";
   window.addEventListener('appinstalled', () => {
     console.log("✅ App was installed");
   });
-}); 
-  if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.error("Service Worker error:", err));
-  }
-  
-window.addEventListener("DOMContentLoaded", () => {
-  loadNews();
-  loadYouTube();
 });
+ 
 
 </script>
 <footer>
