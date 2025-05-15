@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>InfoWars Guyana</title>
   <meta name="theme-color" content="#000000" />
-  <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="manifest.json" />
   <style>
     html, body {
   height: 100%;
@@ -479,40 +479,50 @@ statusBox.innerText = "Showing latest videos";
     container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
   }
 }
-
-  
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-    if (isPWA) {
-      window.location.href = "https://ezf0k1-ng.myshopify.com/";
-    } else {
-      let deferredPrompt;
-      const installBtn = document.getElementById('installBtn');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.style.display = 'inline-block';
-
-        installBtn.addEventListener('click', () => {
-          installBtn.style.display = 'none';
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(() => {
-            deferredPrompt = null;
-          });
-        });
-      });
-    }
-
   
 window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
-});  
+
+  let deferredPrompt;
+  const installBanner = document.getElementById('install-banner');
+  const installBtn = document.getElementById('install-btn');
+
+  // Test if event fires
+  window.addEventListener('beforeinstallprompt', (e) => {
+    alert("✅ beforeinstallprompt fired");
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.style.display = 'flex';
+
+    setTimeout(() => {
+      installBanner.style.display = 'none';
+    }, 10000);
+  });
+
+  installBtn?.addEventListener('click', async () => {
+    alert("Install button clicked");
+    if (!deferredPrompt) {
+      alert("❌ No deferredPrompt available");
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    alert("User choice: " + result.outcome);
+
+    if (result.outcome === 'accepted') {
+      installBanner.style.display = 'none';
+      alert("✅ App installed");
+    }
+
+    deferredPrompt = null;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    alert("✅ App was installed (confirmed)");
+  });
+});
 </script>
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
