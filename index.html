@@ -12,7 +12,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 80vh;
+      height: 100vh;
       font-family: sans-serif;
       margin: 0;
       text-align: center;
@@ -25,38 +25,38 @@
   </style>
 </head>
 <body>
-  <h1>Welcome to the info Studio</h1>
-  <p>This app will redirect you to the store if opened from your phone.</p>
-
-  <button id="installBtn" style="display: none;">Install App</button>
+  <h1>Welcome to the Beauty Studio</h1>
+  <p>This app will redirect you if opened as an installed app.</p>
+  <button id="installBtn">Install App</button>
 
   <script>
+    // Register Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js');
+      navigator.serviceWorker.register('/service-worker.js').catch(console.error);
     }
 
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-    if (isPWA) {
+    // If running as a PWA, redirect to store
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandalone) {
       window.location.href = "https://ezf0k1-ng.myshopify.com/";
-    } else {
-      let deferredPrompt;
-      const installBtn = document.getElementById('installBtn');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.style.display = 'inline-block';
-
-        installBtn.addEventListener('click', () => {
-          installBtn.style.display = 'none';
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(() => {
-            deferredPrompt = null;
-          });
-        });
-      });
     }
+
+    // Install button logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      installBtn.style.display = 'inline-block';
+      installBtn.onclick = () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(() => {
+          deferredPrompt = null;
+        });
+      };
+    });
   </script>
 </body>
 </html>
