@@ -485,41 +485,41 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
-let deferredPrompt;
-const installBanner = document.getElementById('install-banner');
-const installBtn = document.getElementById('install-btn');
+ window.addEventListener("DOMContentLoaded", () => {
+  let deferredPrompt;
+  const installBanner = document.getElementById('install-banner');
+  const installBtn = document.getElementById('install-btn');
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  console.log("✅ beforeinstallprompt fired");
-  e.preventDefault();
-  deferredPrompt = e;
-  installBanner.style.display = 'flex';
+  window.addEventListener('beforeinstallprompt', (e) => {
+    console.log("✅ beforeinstallprompt fired");
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.style.display = 'flex';
 
-  // Optional auto-hide after 10 seconds:
-  setTimeout(() => {
-    installBanner.style.display = 'none';
-  }, 10000);
-});
+    setTimeout(() => {
+      installBanner.style.display = 'none';
+    }, 10000);
+  });
 
-installBtn?.addEventListener('click', async () => {
-  console.log("Install button clicked");
-  if (!deferredPrompt) return;
+  installBtn?.addEventListener('click', async () => {
+    console.log("Install button clicked");
+    if (!deferredPrompt) return;
 
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  console.log("User choice:", result.outcome);
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    console.log("User choice:", result.outcome);
 
-  if (result.outcome === 'accepted') {
-    installBanner.style.display = 'none';
-  }
+    if (result.outcome === 'accepted') {
+      installBanner.style.display = 'none';
+    }
 
-  deferredPrompt = null;
-});
+    deferredPrompt = null;
+  });
 
-window.addEventListener('appinstalled', () => {
-  console.log("✅ App was installed");
-});
-  
+  window.addEventListener('appinstalled', () => {
+    console.log("✅ App was installed");
+  });
+}); 
   if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log("Service Worker registered"))
