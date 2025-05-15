@@ -301,6 +301,8 @@ body > main {
   </style>
 </head>
 <body>
+  
+  <button id="installBtn" style="display: none;">Install App</button>
 <header>
   <!-- Home button -->
   <div class="menu-toggle-container">
@@ -483,15 +485,8 @@ statusBox.innerText = "Showing latest videos";
 window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
-});
-</script>
-<footer>
-  © 2025 InfoWarsGY. All rights reserved.
-</footer>
 
-  <button id="installBtn" style="display: none;">Install App</button>
-
-  <script>
+    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
@@ -518,6 +513,10 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       });
     }
-  </script>
+});
+</script>
+<footer>
+  © 2025 InfoWarsGY. All rights reserved.
+</footer>
 </body>
 </html>
