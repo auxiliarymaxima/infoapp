@@ -486,17 +486,16 @@ statusBox.innerText = "Showing latest videos";
 }
 
   window.addEventListener("DOMContentLoaded", () => {
-  // Load content
   loadNews();
   loadYouTube();
 
-  // Handle install banner
   let deferredPrompt;
   const installBanner = document.getElementById('install-banner');
   const installBtn = document.getElementById('install-btn');
 
+  // Test if event fires
   window.addEventListener('beforeinstallprompt', (e) => {
-    console.log("✅ beforeinstallprompt fired");
+    alert("✅ beforeinstallprompt fired");
     e.preventDefault();
     deferredPrompt = e;
     installBanner.style.display = 'flex';
@@ -507,25 +506,28 @@ statusBox.innerText = "Showing latest videos";
   });
 
   installBtn?.addEventListener('click', async () => {
-    console.log("Install button clicked");
-    if (!deferredPrompt) return;
+    alert("Install button clicked");
+    if (!deferredPrompt) {
+      alert("❌ No deferredPrompt available");
+      return;
+    }
 
     deferredPrompt.prompt();
     const result = await deferredPrompt.userChoice;
-    console.log("User choice:", result.outcome);
+    alert("User choice: " + result.outcome);
 
     if (result.outcome === 'accepted') {
       installBanner.style.display = 'none';
+      alert("✅ App installed");
     }
 
     deferredPrompt = null;
   });
 
   window.addEventListener('appinstalled', () => {
-    console.log("✅ App was installed");
+    alert("✅ App was installed (confirmed)");
   });
 });
- 
 
 </script>
 <footer>
