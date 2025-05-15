@@ -345,6 +345,39 @@ body > main {
     Install App
   </button>
 </div>  
+  <script>
+let deferredPrompt;
+const installBanner = document.getElementById('install-banner');
+const installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log("✅ beforeinstallprompt fired");
+  e.preventDefault();
+  deferredPrompt = e;
+  installBanner.style.display = 'block';
+});
+
+installBtn?.addEventListener('click', async () => {
+  console.log("Install button clicked");
+  if (!deferredPrompt) {
+    console.log("❌ No deferredPrompt available");
+    return;
+  }
+
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log("User choice:", outcome);
+
+  if (outcome === 'accepted') {
+    console.log("✅ App installed");
+    installBanner.style.display = 'none';
+  } else {
+    console.log("❌ User dismissed the install");
+  }
+
+  deferredPrompt = null;
+});
+</script>
   <main>
 <div class="main-container">
   <div class="column">
@@ -485,8 +518,6 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
-  
-
   if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log("Service Worker registered"))
@@ -497,6 +528,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
 });
+
 </script>
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
