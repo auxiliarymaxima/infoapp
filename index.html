@@ -27,35 +27,59 @@
 <body>
   <h1>Welcome to the Beauty Studio</h1>
   <p>This app will redirect you if opened as an installed app.</p>
-  <button id="installBtn">Install App</button>
+  <button id="installBtn" style="display: none;">Install App</button>
 
   <script>
-    // Register Service Worker
+    alert("Page loaded.");
+
+    // Register service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').catch(console.error);
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => {
+          alert("Service worker registered.");
+        })
+        .catch(err => {
+          alert("Service worker failed: " + err);
+        });
+    } else {
+      alert("Service worker not supported.");
     }
 
-    // If running as a PWA, redirect to store
+    // Detect if running as standalone/PWA
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    alert("Is standalone: " + isStandalone);
     if (isStandalone) {
+      alert("Redirecting to store...");
       window.location.href = "https://ezf0k1-ng.myshopify.com/";
     }
 
-    // Install button logic
+    // Install logic
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
 
     window.addEventListener('beforeinstallprompt', (e) => {
+      alert("beforeinstallprompt fired.");
       e.preventDefault();
       deferredPrompt = e;
 
       installBtn.style.display = 'inline-block';
-      installBtn.onclick = () => {
+
+      installBtn.addEventListener('click', () => {
+        alert("Install button clicked.");
+        installBtn.style.display = 'none';
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.finally(() => {
+
+        deferredPrompt.userChoice.then((choiceResult) => {
+          alert("User choice: " + choiceResult.outcome);
           deferredPrompt = null;
+        }).catch(err => {
+          alert("Prompt error: " + err);
         });
-      };
+      });
+    });
+
+    window.addEventListener('appinstalled', () => {
+      alert("App successfully installed!");
     });
   </script>
 </body>
