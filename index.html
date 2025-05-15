@@ -301,7 +301,12 @@ body > main {
   </style>
 </head>
 <body>
-
+<div id="install-banner" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#111; color:white; padding:12px 20px; border-radius:30px; box-shadow:0 2px 8px rgba(0,0,0,0.3); z-index:9999;">
+  <span style="margin-right:10px;">Install InfoWars App?</span>
+  <button id="install-btn" style="background:#2bb673; border:none; color:white; padding:6px 12px; border-radius:20px; cursor:pointer; font-weight:bold;">
+    Install
+  </button>
+</div>
 <header>
   <!-- Home button -->
   <div class="menu-toggle-container">
@@ -372,12 +377,6 @@ body > main {
 
 <div class="ads"></div>
   </main>
-<div id="install-banner" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#111; color:white; padding:12px 20px; border-radius:30px; box-shadow:0 2px 8px rgba(0,0,0,0.3); z-index:9999;">
-  <span style="margin-right:10px;">Install InfoWars App?</span>
-  <button id="install-btn" style="background:#2bb673; border:none; color:white; padding:6px 12px; border-radius:20px; cursor:pointer; font-weight:bold;">
-    Install
-  </button>
-</div>
 <script>
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
