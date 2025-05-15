@@ -368,8 +368,7 @@ body > main {
     </div>
   </div>
 </div>
-
-    <button id="installBtn" style="display: block;">Install App</button>
+<button id="installBtn">Install App</button>
 
 <div class="ads"></div>
   </main>
@@ -479,49 +478,43 @@ statusBox.innerText = "Showing latest videos";
     container.innerHTML = `<p style="color:red;">Failed to load YouTube videos</p>`;
   }
 }
+
   
-window.addEventListener("DOMContentLoaded", () => {
-  loadNews();
-  loadYouTube();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
 
   let deferredPrompt;
-  const installBanner = document.getElementById('install-banner');
-  const installBtn = document.getElementById('install-btn');
+  const installBtn = document.getElementById('installBtn');
 
-  // Test if event fires
   window.addEventListener('beforeinstallprompt', (e) => {
-    alert("✅ beforeinstallprompt fired");
     e.preventDefault();
     deferredPrompt = e;
-    installBanner.style.display = 'flex';
-
-    setTimeout(() => {
-      installBanner.style.display = 'none';
-    }, 10000);
   });
 
-  installBtn?.addEventListener('click', async () => {
-    alert("Install button clicked");
+  installBtn.addEventListener('click', () => {
     if (!deferredPrompt) {
-      alert("❌ No deferredPrompt available");
+      alert("Install prompt not available yet.");
       return;
     }
 
     deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    alert("User choice: " + result.outcome);
-
-    if (result.outcome === 'accepted') {
-      installBanner.style.display = 'none';
-      alert("✅ App installed");
-    }
-
-    deferredPrompt = null;
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        alert('✅ App installed');
+      } else {
+        alert('❌ Installation dismissed');
+      }
+      deferredPrompt = null;
+    });
   });
 
   window.addEventListener('appinstalled', () => {
-    alert("✅ App was installed (confirmed)");
+    alert('✅ App successfully installed');
   });
+window.addEventListener("DOMContentLoaded", () => {
+  loadNews();
+  loadYouTube();
 });
 </script>
 <footer>
