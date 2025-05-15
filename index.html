@@ -30,57 +30,52 @@
   <button id="installBtn" style="display: none;">Install App</button>
 
   <script>
-    alert("Page loaded.");
+  alert("Page loaded.");
 
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(() => {
-          alert("Service worker registered.");
-        })
-        .catch(err => {
-          alert("Service worker failed: " + err);
-        });
-    } else {
-      alert("Service worker not supported.");
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => alert("Service worker registered."))
+      .catch(err => alert("Service worker failed: " + err));
+  } else {
+    alert("Service worker not supported.");
+  }
 
-    // Detect if running as standalone/PWA
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    alert("Is standalone: " + isStandalone);
-    if (isStandalone) {
-      alert("Redirecting to store...");
-      window.location.href = "https://ezf0k1-ng.myshopify.com/";
-    }
+  const installBtn = document.getElementById('installBtn');
 
-    // Install logic
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
+  // Check display mode more reliably
+  function getPWADisplayMode() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (document.referrer.startsWith('android-app://')) return 'twa';
+    if (navigator.standalone) return 'standalone';
+    if (isStandalone) return 'standalone';
+    return 'browser';
+  }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      alert("beforeinstallprompt fired.");
-      e.preventDefault();
-      deferredPrompt = e;
+  alert("PWA mode: " + getPWADisplayMode());
 
-      installBtn.style.display = 'inline-block';
+  // Listen for installation prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    alert("beforeinstallprompt event fired!");
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
 
-      installBtn.addEventListener('click', () => {
-        alert("Install button clicked.");
-        installBtn.style.display = 'none';
-        deferredPrompt.prompt();
-
-        deferredPrompt.userChoice.then((choiceResult) => {
-          alert("User choice: " + choiceResult.outcome);
-          deferredPrompt = null;
-        }).catch(err => {
-          alert("Prompt error: " + err);
-        });
+    installBtn.addEventListener('click', () => {
+      alert("Install button clicked.");
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(result => {
+        alert("Install result: " + result.outcome);
+        deferredPrompt = null;
       });
     });
+  });
 
-    window.addEventListener('appinstalled', () => {
-      alert("App successfully installed!");
-    });
+  // Detect install
+  window.addEventListener('appinstalled', () => {
+    alert("App successfully installed!");
+  });
   </script>
 </body>
 </html>
