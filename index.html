@@ -298,28 +298,44 @@ body > main {
   font-weight: normal;
   opacity: 0.8;
 }
-    #installPrompt {
+    #pwaInstallBanner {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #004aad;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 30px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 25px;
   font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   z-index: 2000;
   display: none;
-  transition: opacity 0.3s ease;
+  animation: fadeIn 0.5s ease-in-out;
 }
-#installPrompt:hover {
-  opacity: 0.9;
+
+#pwaInstallBanner button {
+  background: #004aad;
+  border: none;
+  color: white;
+  margin-left: 10px;
+  padding: 6px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
   </style>
 </head>
 <body>
-<div id="installPrompt">Install App</div>
+<div id="pwaInstallBanner">
+  Add this app to your home screen?
+  <button id="pwaInstallBtn">Install</button>
+</div>
   
 <header>
   <!-- Home button -->
@@ -500,21 +516,27 @@ statusBox.innerText = "Showing latest videos";
 }
 
 let deferredPrompt;
-const installPrompt = document.getElementById("installPrompt");
+const banner = document.getElementById("pwaInstallBanner");
+const installBtn = document.getElementById("pwaInstallBtn");
 
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installPrompt.style.display = "block";
+  banner.style.display = "block";
+
+  // Auto-hide after 10 seconds
+  setTimeout(() => {
+    banner.style.display = "none";
+  }, 10000);
 });
 
-installPrompt.addEventListener("click", async () => {
-  installPrompt.style.display = "none";
+installBtn.addEventListener("click", async () => {
+  banner.style.display = "none";
   if (deferredPrompt) {
     deferredPrompt.prompt();
     const result = await deferredPrompt.userChoice;
     if (result.outcome === "accepted") {
-      console.log("User accepted install prompt");
+      console.log("PWA installed");
     }
     deferredPrompt = null;
   }
