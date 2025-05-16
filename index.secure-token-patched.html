@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>InfoWars Guyana</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main {
+  flex: 1;
+}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+    }
+    header {
+      background-color: #000;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      position: relative;
+    }
+    .brand {
+      text-align: center;
+      flex: 1;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    .brand small {
+      display: block;
+      font-size: 10px;
+      font-weight: normal;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1010;
+    }
+    #menu-toggle {
+      display: none;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #111;
+      z-index: 1000;
+      border-top: 1px solid #333;
+      padding: 10px 15px;
+    }
+    #menu-toggle:checked ~ .dropdown {
+      display: block;
+    }
+
+    .menu-header {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .epaper-links {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+    }
+
+    .epaper-links a {
+      white-space: nowrap;
+      background: #222;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .epaper-links a:hover {
+      background: #333;
+    }
+
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      gap: 20px;
+    }
+    .column {
+      flex: 1;
+      min-width: 300px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+    #result, .video-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .news-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .news-text {
+      flex: 1;
+      font-size: 0.85rem;
+    }
+    .news-media {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .video-thumb {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .video-thumb img {
+      width: 100%;
+      display: block;
+    }
+    .video-thumb p {
+      margin: 5px;
+      font-size: 12px;
+      color: #333;
+    }
+    .ads {
+      background: #ff914d;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      margin: 20px 10px 10px;
+    }
+    .preview-strip {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 5px 0;
+    }
+    .preview-strip img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .preview-strip div {
+      text-align: center;
+      font-size: 10px;
+      color: #333;
+    }
+    footer {
+      background-color: #000;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 12px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+    .epaper-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 15px;
+  background: #111;
+}
+
+.epaper-bar .menu-header {
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  flex-shrink: 0;
+}
+
+.epaper-bar a {
+  white-space: nowrap;
+  background: #222;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.epaper-bar a:hover {
+  background: #333;
+}
+
+    .guyana-letters {
+  display: inline-flex;
+  font-weight: bold;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-left: 5px;
+}
+
+/* G - Red */
+.g1 {
+  color: #d9272e;
+}
+
+/* U - Half Red, Half Gold */
+.g2 {
+  background: linear-gradient(to right, #d9272e 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Y - Black & Gold diagonal, mimicking the triangle split */
+.g3 {
+  background: linear-gradient(to top left, #111 45%, #ffcb05 55%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* A - Half White, Half Gold (vertical) */
+.g4 {
+  background: linear-gradient(to right, white 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* N - Half Green, Half White (reused from previous) */
+.g5 {
+  background: linear-gradient(to right, #2bb673 50%, white 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* A - Diagonal Green and Gold */
+.g6 {
+  background: linear-gradient(to bottom right, #2bb673 50%, #ffcb05 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+    .menu-toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -5px;
+  z-index: 1010;
+}
+
+.menu-toggle-container .menu-label {
+  font-size: 10px;
+  color: white;
+  margin-top: 2px;
+  font-weight: normal;
+  opacity: 0.8;
+}
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- Home button -->
+  <div class="menu-toggle-container">
+    <button class="icon-btn" onclick="location.reload()">&#8962;</button>
+    <div class="menu-label">Home</div>
+  </div>
+
+  <!-- Brand section -->
+  <div class="brand">
+    INFO WARS 
+    <span class="guyana-letters">
+      <span class="g1">G</span>
+      <span class="g2">U</span>
+      <span class="g3">Y</span>
+      <span class="g4">A</span>
+      <span class="g5">N</span>
+      <span class="g6">A</span>
+    </span>
+    <small>All the news in one place</small>
+  </div>
+
+  <!-- EPapers toggle with dropdown correctly positioned -->
+  <div class="menu-toggle-container">
+    <input type="checkbox" id="menu-toggle" />
+    <label for="menu-toggle" class="icon-btn">&#9776;</label>
+    <div class="menu-label">EPapers</div>
+
+    <!-- Moved dropdown here so it is a sibling of #menu-toggle -->
+    <div class="dropdown">
+      <div class="epaper-bar">
+        <a href="https://guyanatimesgy.com" target="_blank">Guyana Times</a>
+        <a href="https://www.kaieteurnewsonline.com/" target="_blank">Kaieteur News</a>
+        <a href="https://epaper.stabroeknews.com/stabroek-news" target="_blank">Stabroek News</a>
+        <a href="https://guyanachronicle.com/" target="_blank">Guyana Chronicle</a>
+      </div>
+    </div>
+  </div>
+</header>
+  <main>
+<div class="main-container">
+  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('facebook-section', 'facebook-preview')" 
+      style="background:#004aad;"
+    >FACEBOOK News</div>
+    <div id="facebook-preview" class="preview-strip"></div>
+    <div id="facebook-section" style="display: none;">
+      <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
+      <div id="result"></div>
+    </div>
+  </div>  
+  <div class="column">
+    <div 
+      class="section-title" 
+      onclick="toggleSection('youtube-section', 'youtube-preview')" 
+      style="background:#e60039;"
+    >YOUTUBE News</div>
+    <div id="youtube-preview" class="preview-strip"></div>
+    <div id="youtube-section" style="display: none;">
+      <div id="youtube-status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest videos...</div>
+      <div class="video-grid" id="youtube-feed">
+        <p style="grid-column: 1 / -1; text-align: center;">Loading videos...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ads"></div>
+  </main>
+
+
+
+
+<script>
+const tokenURL = "https://infoapp-git-vercel-api-andrews-projects-82de4cf7.vercel.app/api/token";
+
+async function loadNewsData() {
+  try {
+    const tokenRes = await fetch(tokenURL);
+    const { token } = await tokenRes.json();
+
+    const newsURL = `https://api.apify.com/v2/actor-tasks/UHpFz2Z3vzJHXUc4k/runs/last/dataset/items?token=${token}&clean=true`;
+    const res = await fetch(newsURL);
+    const newsData = await res.json();
+
+    renderPosts(newsData);
+  } catch (err) {
+    document.getElementById("news-section").innerText = "Failed to load news: " + err.message;
+  }
+}
+
+async function loadYouTubeData() {
+  const ytContainer = document.getElementById("youtube-section");
+  try {
+    const tokenRes = await fetch(tokenURL);
+    const { token } = await tokenRes.json();
+
+    const ytURL = `https://api.apify.com/v2/actor-tasks/ZX1OMMUfGxjf5a6YF/runs/last/dataset/items?token=${token}&clean=true`;
+    const res = await fetch(ytURL);
+    const ytData = await res.json();
+
+    if (!Array.isArray(ytData) || ytData.length === 0) {
+      ytContainer.innerText = "No recent YouTube videos found.";
+    } else {
+      renderYouTube(ytData);
+    }
+  } catch (err) {
+    ytContainer.innerText = "Failed to load YouTube videos: " + err.message;
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadNewsData();
+  loadYouTubeData();
+});
+</script>
+
+</body>
+</html>
