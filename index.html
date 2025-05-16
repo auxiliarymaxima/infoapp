@@ -382,7 +382,7 @@ function toggleSection(sectionId, previewId) {
   preview.style.display = isVisible ? 'flex' : 'none';
 }
 
-const datasetUrl = "/api/news";
+const datasetUrl = "/news";
 
 function truncate(text, maxLength) {
   return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
@@ -450,7 +450,7 @@ async function loadYouTube() {
   const previewBox = document.getElementById("youtube-preview");
   const statusBox = document.getElementById("youtube-status");
   try {
-    const response = await fetch("/api/youtube");
+    const response = await fetch("/youtube");
     const data = await response.json();
 
     const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
