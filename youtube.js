@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const token = process.env.APIFY_TOKEN;
+  const token = "apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby";
   const taskId = "ZX1OMMUfGxjf5a6YF";
   const allowedReferer = "https://auxiliarymaxima.github.io/infoapp"; // Change to your GitHub Pages domain
 
