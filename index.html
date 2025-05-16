@@ -2,65 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Beauty Studio</title>
-  <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Beauty Studio" />
   <style>
     body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       font-family: sans-serif;
-      margin: 0;
       text-align: center;
+      padding: 40px;
     }
-    button {
+    #installBtn {
+      display: none;
+      margin-top: 20px;
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 20px;
     }
   </style>
-  <!-- Progressive Web App meta -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Beauty Studio">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <h1>Welcome to the Beauty Studio</h1>
-  <p>The app will redirect you if opened as an installed app.</p>
-  <button id="installBtn" style="display: none;">Install App</button>
+  <h1>Beauty Studio</h1>
+  <p>Install our app to get started!</p>
+  <button id="installBtn">Install App</button>
 
   <script>
-  let deferredPrompt;
-  const installBtn = document.getElementById('installBtn');
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.error('SW registration failed', err));
+    }
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('Install prompt fired');
-    e.preventDefault();
-    deferredPrompt = e;
+    // Install Prompt Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
 
-    // Show button after interaction
-    document.body.addEventListener('click', () => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('beforeinstallprompt event triggered');
+      e.preventDefault();
+      deferredPrompt = e;
       installBtn.style.display = 'inline-block';
-    });
 
-    installBtn.addEventListener('click', () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(result => {
-        console.log('User response:', result.outcome);
-        deferredPrompt = null;
+      installBtn.addEventListener('click', () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(result => {
+          console.log('User choice:', result.outcome);
+          deferredPrompt = null;
+        });
       });
     });
-  });
 
-  window.addEventListener('appinstalled', () => {
-    console.log('App installed');
-  });
+    window.addEventListener('appinstalled', () => {
+      console.log('App was installed');
+    });
   </script>
 </body>
 </html>
