@@ -1,7 +1,7 @@
 {
   "name": "The Beauty Studio",
   "short_name": "Beauty Studio",
-  "start_url": "/infoapp/",
+  "start_url": "/",
   "display": "standalone",
   "icons": [
     {
