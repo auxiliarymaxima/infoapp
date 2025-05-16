@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-  const allowedReferer = "https://auxiliarymaxima.github.io/infoapp"; // your live GitHub Pages site
+  const allowedReferer = "https://auxiliarymaxima.github.io/infoapp";
   const referer = req.headers.referer || "";
 
   if (!referer.startsWith(allowedReferer)) {
