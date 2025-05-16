@@ -36,51 +36,30 @@
   <button id="installBtn" style="display: none;">Install App</button>
 
   <script>
-  alert("Page loaded.");
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(() => alert("Service worker registered."))
-      .catch(err => alert("Service worker failed: " + err));
-  } else {
-    alert("Service worker not supported.");
-  }
-
+  let deferredPrompt;
   const installBtn = document.getElementById('installBtn');
 
-  // Check display mode more reliably
-  function getPWADisplayMode() {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    if (document.referrer.startsWith('android-app://')) return 'twa';
-    if (navigator.standalone) return 'standalone';
-    if (isStandalone) return 'standalone';
-    return 'browser';
-  }
-
-  alert("PWA mode: " + getPWADisplayMode());
-
-  // Listen for installation prompt
-  let deferredPrompt;
   window.addEventListener('beforeinstallprompt', (e) => {
-    alert("beforeinstallprompt event fired!");
+    console.log('Install prompt fired');
     e.preventDefault();
     deferredPrompt = e;
-    installBtn.style.display = 'inline-block';
+
+    // Show button after interaction
+    document.body.addEventListener('click', () => {
+      installBtn.style.display = 'inline-block';
+    });
 
     installBtn.addEventListener('click', () => {
-      alert("Install button clicked.");
-      installBtn.style.display = 'none';
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(result => {
-        alert("Install result: " + result.outcome);
+        console.log('User response:', result.outcome);
         deferredPrompt = null;
       });
     });
   });
 
-  // Detect install
   window.addEventListener('appinstalled', () => {
-    alert("App successfully installed!");
+    console.log('App installed');
   });
   </script>
 </body>
