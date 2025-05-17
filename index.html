@@ -213,29 +213,34 @@ body > main {
 }
 
 .epaper-bar {
+  position: absolute;
+  top: 40px; /* adjust as needed to appear just below the hamburger */
+  right: 10px;
   display: flex;
-  flex-direction: column; /* stack vertically */
-  align-items: flex-end;   /* align to the right */
-  gap: 10px;
-  padding: 10px 15px;
-  background: #111;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  z-index: 1000;
+  pointer-events: none; /* lets clicks pass through EXCEPT for links */
 }
 
 .epaper-bar a {
-  background: #222;
-  color: #fff;
+  background: rgba(34, 34, 34, 0.85);
+  color: white;
   padding: 8px 16px;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
   transition: background 0.3s;
-  max-width: fit-content;
+  pointer-events: auto; /* allows clicking the link */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .epaper-bar a:hover {
-  background: #333;
+  background: rgba(51, 51, 51, 0.95);
 }
-
 
     .guyana-letters {
   display: inline-flex;
