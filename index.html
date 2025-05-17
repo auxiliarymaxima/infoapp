@@ -176,11 +176,15 @@ body > main {
       margin: 20px 10px 10px;
     }
     .preview-strip {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 5px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  grid-auto-rows: 80px;
+  gap: 10px;
+  padding: 10px;
+  max-height: 180px; /* 2 rows max */
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
     }
     .preview-strip img {
       width: 60px;
