@@ -55,15 +55,14 @@ body > main {
     }
 
     .dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #111;
-      z-index: 1000;
-      border-top: 1px solid #333;
-      padding: 10px 15px;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: transparent; /* transparent so it doesn’t show a strip */
+  z-index: 1000;
+  padding: 0;
     }
     #menu-toggle:checked ~ .dropdown {
       display: block;
