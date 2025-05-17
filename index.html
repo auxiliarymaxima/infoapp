@@ -446,8 +446,8 @@ function toggleSection(sectionId, previewId) {
   section.style.display = isVisible ? 'none' : 'block';
   preview.style.display = isVisible ? 'flex' : 'none';
 }
-
-const datasetUrl = "https://api.apify.com/v2/actor-tasks/UHpFz2Z3vzJHXUc4k/runs/last/dataset/items?token=apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby&clean=true";
+  
+const datasetUrl = "/api/news"; // Secure proxy endpoint
 
 function truncate(text, maxLength) {
   return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
@@ -515,7 +515,7 @@ async function loadYouTube() {
   const previewBox = document.getElementById("youtube-preview");
   const statusBox = document.getElementById("youtube-status");
   try {
-    const response = await fetch("https://api.apify.com/v2/actor-tasks/ZX1OMMUfGxjf5a6YF/runs/last/dataset/items?token=apify_api_2CYER6z62rMBIwe9DUGsWNDVG2apE64m9oby&clean=true");
+    const response = await fetch("/api/youtube"); // Secure proxy endpoint
     const data = await response.json();
 
     const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
