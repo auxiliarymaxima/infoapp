@@ -304,8 +304,9 @@ body > main {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7); /* transparent dark */
-  color: #fff;
+  background: rgba(255, 255, 255, 0.85); /* light transparent white */
+  color: #000; /* dark text for contrast */
+  backdrop-filter: blur(6px);
   padding: 10px 18px;
   border-radius: 30px;
   font-size: 14px;
@@ -315,7 +316,7 @@ body > main {
   align-items: center;
   gap: 12px;
   animation: fadeIn 0.4s ease;
-  backdrop-filter: blur(6px);
+  
 }
 
 #pwaInstallBanner .app-icon {
@@ -330,9 +331,9 @@ body > main {
 }
 
 #pwaInstallBanner button {
-  background: #004aad;
-  border: none;
-  color: white;
+  background: white;
+  color: #004aad;
+  border: 1px solid #004aad;
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
