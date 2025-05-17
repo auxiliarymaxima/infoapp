@@ -304,25 +304,18 @@ body > main {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.85); /* light transparent white */
-  color: #000; /* dark text for contrast */
-  backdrop-filter: blur(6px);
-  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.5); /* very transparent dark */
+  color: #fff;
+  padding: 10px 16px;
   border-radius: 30px;
   font-size: 14px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
   z-index: 2000;
   display: none;
   align-items: center;
   gap: 12px;
   animation: fadeIn 0.4s ease;
-  
-}
-
-#pwaInstallBanner .app-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  backdrop-filter: blur(4px);
 }
 
 #pwaInstallBanner span {
@@ -331,13 +324,22 @@ body > main {
 }
 
 #pwaInstallBanner button {
-  background: white;
-  color: #004aad;
-  border: 1px solid #004aad;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #004aad;
+  border: none;
+  color: white;
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 13px;
+}
+
+#pwaInstallBanner button img {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
 }
 
 @keyframes fadeIn {
@@ -348,9 +350,11 @@ body > main {
 </head>
 <body>
 <div id="pwaInstallBanner">
-  <img src="icon.png" alt="App Icon" class="app-icon" />
   <span>Add this app to your home screen?</span>
-  <button id="pwaInstallBtn">Install</button>
+  <button id="pwaInstallBtn">
+    <img src="/icon.png" alt="App Icon" />
+    Install
+  </button>
 </div>
   
 <header>
@@ -531,7 +535,6 @@ statusBox.innerText = "Showing latest videos";
   }
 }
 
-
 let deferredPrompt;
 const banner = document.getElementById("pwaInstallBanner");
 const installBtn = document.getElementById("pwaInstallBtn");
@@ -543,7 +546,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
   setTimeout(() => {
     banner.style.display = "none";
-  }, 10000);
+  }, 10000); // auto-hide after 10s
 });
 
 installBtn.addEventListener("click", async () => {
@@ -557,7 +560,7 @@ installBtn.addEventListener("click", async () => {
     deferredPrompt = null;
   }
 });
-  
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(reg => console.log("Service Worker registered", reg))
