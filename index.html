@@ -454,30 +454,32 @@ function truncate(text, maxLength) {
 }
 
 function renderPosts(data) {
+  const validPosts = data.filter(post => !post.error && post.media?.[0]?.thumbnail);
+
   const resultBox = document.getElementById("result");
   const statusBox = document.getElementById("status");
   const previewBox = document.getElementById("facebook-preview");
 
-  if (!data.length) {
-    statusBox.innerText = "No posts found.";
+  if (!validPosts.length) {
+    statusBox.innerText = "No public posts available at this time.";
     resultBox.innerHTML = "";
     return;
   }
 
   statusBox.innerText = `Showing latest posts`;
 
-  previewBox.innerHTML = data.slice(0, 6).map(post => {
-    const thumb = post.media?.[0]?.thumbnail;
-    const link = post.postUrl || post.url;
-    const name = post.user?.name || "Unknown";
-    return thumb && link ? `<div><a href="${link}" target="_blank"><img src="${thumb}" /></a><div>${name}</div></div>` : "";
+  previewBox.innerHTML = validPosts.slice(0, 6).map(post => {
+    const thumb = post.media[0]?.thumbnail;
+    const link = post.url || post.postUrl;
+    const name = post.user?.name || post.pageName || "Unknown";
+    return `<div><a href="${link}" target="_blank"><img src="${thumb}" /></a><div>${name}</div></div>`;
   }).join("");
 
-  resultBox.innerHTML = data.map(post => {
+  resultBox.innerHTML = validPosts.map(post => {
     const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
-    const displayName = post.user?.name || "Unknown Page";
-    const mediaThumbnail = post.media?.[0]?.thumbnail;
-    const mediaUrl = post.postUrl || post.url;
+    const displayName = post.user?.name || post.pageName || "Unknown Page";
+    const mediaThumbnail = post.media[0]?.thumbnail;
+    const mediaUrl = post.url || post.postUrl;
 
     const mediaHTML = mediaThumbnail && mediaUrl
       ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
