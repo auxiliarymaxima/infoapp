@@ -523,11 +523,11 @@ async function loadYouTube() {
 
     const validVideos = data.filter(video => video.thumbnailUrl && video.url && video.channelName);
 statusBox.innerText = "Showing latest videos";
-    previewBox.innerHTML = validVideos.slice(0, 6).map(video => {
+    previewBox.innerHTML = validVideos.slice(0, 25).map(video => {
       return `<div><a href="${video.url}" target="_blank"><img src="${video.thumbnailUrl}" /></a><div>${video.channelName}</div></div>`;
     }).join("");
 
-    container.innerHTML = validVideos.slice(0, 6).map(video => {
+    container.innerHTML = validVideos.slice(0, 25).map(video => {
       const title = video.title || "Untitled Video";
       const url = video.url;
       const thumbnail = video.thumbnailUrl;
