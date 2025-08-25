@@ -10,69 +10,66 @@
 </head>
 <body>
   <span id="active-visitors" class="pill-counter">Loading…</span>
+<script>
+(function () {
+  const NAMESPACE = "infowars-guyana-2tA6w9kS8q"; // change to your unique value
+  const KEY = "activeVisitors";
+  const VIEW = document.getElementById("active-visitors");
+  const SESSION_FLAG = "countapi-active";
+  const BASE = "https://api.countapi.xyz";
 
-  <script>
-  (function () {
-    // ⚠️ Use your own randomized namespace to avoid collisions
-    const NAMESPACE = "infowars-guyana-2tA6w9kS8q";
-    const KEY = "activeVisitors";
-    const VIEW = document.getElementById("active-visitors");
-    const SESSION_FLAG = "countapi-active";
-    const BASE = "https://api.countapi.xyz";
+  if (!VIEW) { console.error("Missing #active-visitors element"); return; }
 
-    if (!VIEW) { console.error("Missing #active-visitors element"); return; }
+  const setText = (n) => VIEW.textContent = `Active now: ${n}`;
+  const showError = (msg) => { VIEW.textContent = "Counter offline"; console.error(msg); };
 
-    const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
-    const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
-    const createIfMissing = () =>
-      fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`)
-        .then(r => r.json()).then(j => console.log("createIfMissing:", j)).catch(() => {});
+  const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
+  const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
+  const createIfMissing = () =>
+    fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`,
+      { cache:"no-store" }
+    ).then(r=>r.json()).then(j=>console.log("createIfMissing", j)).catch(e=>console.warn("createIfMissing failed (ok if exists)", e));
 
-    const setText = (n) => { VIEW.textContent = `Active now: ${n}`; };
+  async function refresh(){
+    try{
+      const r = await fetch(getUrl(), { cache:"no-store" });
+      if (!r.ok) throw new Error(`GET failed ${r.status}`);
+      const d = await r.json();
+      console.log("GET", d);
+      if (typeof d.value === "number") setText(d.value);
+      else showError("No value in response");
+    }catch(e){ showError(e); }
+  }
 
-    async function refresh(){
-      try{
-        const r = await fetch(getUrl(), { cache:"no-store" });
-        const d = await r.json();
-        console.log("GET value:", d);
-        if (typeof d.value === "number") setText(d.value);
-      }catch(e){ console.error("GET failed:", e); }
+  async function incrementOnce(){
+    if (sessionStorage.getItem(SESSION_FLAG)) return;
+    try{
+      await createIfMissing();
+      const r = await fetch(incUrl(+1), { cache:"no-store" });
+      if (!r.ok) throw new Error(`INC failed ${r.status}`);
+      const d = await r.json();
+      console.log("INC", d);
+      if (typeof d.value === "number") setText(d.value);
+      sessionStorage.setItem(SESSION_FLAG, "1");
+    }catch(e){ showError(e); }
+  }
+
+  function decrementOnHide(){
+    if (!sessionStorage.getItem(SESSION_FLAG)) return;
+    const url = incUrl(-1);
+    try{
+      const blob = new Blob([], { type:"text/plain" });
+      navigator.sendBeacon(url, blob);
+    }catch(e){
+      fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
     }
+    sessionStorage.removeItem(SESSION_FLAG);
+  }
 
-    async function incrementOnce(){
-      if (sessionStorage.getItem(SESSION_FLAG)) return;
-      try{
-        await createIfMissing();
-        const r = await fetch(incUrl(+1), { cache:"no-store" });
-        const d = await r.json();
-        console.log("INC:", d);
-        if (typeof d.value === "number") setText(d.value);
-        sessionStorage.setItem(SESSION_FLAG, "1");
-      }catch(e){ console.error("INC failed:", e); }
-    }
-
-    function decrementOnHide(){
-      if (!sessionStorage.getItem(SESSION_FLAG)) return;
-      const url = incUrl(-1);
-      try{
-        const ok = navigator.sendBeacon(url);
-        console.log("sendBeacon(-1) sent?", ok);
-      }catch(e){
-        fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
-      }
-      sessionStorage.removeItem(SESSION_FLAG);
-    }
-
-    // Run after DOM is ready (script is already at end of body, but extra-safe)
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => { refresh().then(incrementOnce); });
-    } else {
-      refresh().then(incrementOnce);
-    }
-
-    setInterval(refresh, 5000);
-    window.addEventListener("pagehide", decrementOnHide);
-  })();
-  </script>
+  const run = () => { refresh().then(incrementOnce); setInterval(refresh, 5000); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
+  window.addEventListener("pagehide", decrementOnHide);
+})();
+</script>
 </body>
 </html>
