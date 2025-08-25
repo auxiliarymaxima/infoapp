@@ -612,7 +612,61 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+(() => {
+  // Use a hard-to-guess namespace to reduce tampering
+  const NAMESPACE = "infowars-guyana-2tA6w9kS8q";  // change me
+  const KEY = "activeVisitors";                     // or per-page: `active:${location.pathname.replace(/\W+/g,"_")}`
+  const VIEW = document.getElementById("active-visitors");
+  const SESSION_FLAG = "countapi-active";
+  const BASE = "https://api.countapi.xyz";
 
+  if (!VIEW) return;
+
+  const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
+  const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
+  const createIfMissing = () =>
+    fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`)
+      .catch(()=>{});
+
+  const setText = (n) => VIEW.textContent = `Active now: ${n}`;
+
+  async function refresh(){
+    try{
+      const r = await fetch(getUrl(), { cache:"no-store" });
+      const d = await r.json();
+      if (typeof d.value === "number") setText(d.value);
+    }catch{}
+  }
+
+  async function incrementOnce(){
+    if (sessionStorage.getItem(SESSION_FLAG)) return;
+    try{
+      await createIfMissing();
+      const r = await fetch(incUrl(+1), { cache:"no-store" });
+      const d = await r.json();
+      if (typeof d.value === "number") setText(d.value);
+      sessionStorage.setItem(SESSION_FLAG, "1");
+    }catch{}
+  }
+
+  function decrementOnHide(){
+    if (!sessionStorage.getItem(SESSION_FLAG)) return;
+    const url = incUrl(-1);
+    try{
+      const blob = new Blob([], { type:"text/plain" });
+      navigator.sendBeacon(url, blob);
+    }catch{
+      fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
+    }
+    sessionStorage.removeItem(SESSION_FLAG);
+  }
+
+  refresh().then(incrementOnce);
+  setInterval(refresh, 5000);
+  window.addEventListener("pagehide", decrementOnHide);
+})();
+</script>
 
   
 <footer>
