@@ -469,7 +469,7 @@ function renderPosts(data) {
 
   statusBox.innerText = `Showing latest posts`;
 
-  previewBox.innerHTML = validPosts.slice(0, 6).map(post => {
+  previewBox.innerHTML = validPosts.slice(0, 25).map(post => {
     const thumb = post.media[0]?.thumbnail;
     const link = post.url || post.postUrl;
     const name = post.user?.name || post.pageName || "Unknown";
