@@ -356,6 +356,22 @@ body > main {
   from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+
+    .pill-counter{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font:600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  padding:.35rem .6rem; border-radius:999px; white-space:nowrap;
+  background:#f1f5f9; /* slate-100 */
+  border:1px solid #e2e8f0; /* slate-200 */
+}
+.pill-counter::before{
+  content:"●"; font-size:10px;
+  /* no specific color to keep it neutral – browsers will pick default */
+}
+@media (prefers-color-scheme: dark){
+  .pill-counter{ background:#0f172a; border-color:#1e293b; color:#e2e8f0; }
+}
   </style>
 </head>
 <body>
@@ -404,6 +420,16 @@ body > main {
       </div>
     </div>
   </div>
+
+
+
+<!-- COUNTER -->
+<div class="topbar-right">
+  <span id="active-visitors" class="pill-counter" aria-live="polite">…</span>
+</div>
+
+
+  
 </header>
   <main>
 <div class="main-container">
@@ -586,6 +612,9 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+
+  
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
 </footer>
