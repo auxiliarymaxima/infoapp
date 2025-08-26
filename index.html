@@ -458,19 +458,24 @@ body > main {
 </div>
 
 <div class="ads">
-<!-- Unified "Online now" block with WAU widget, scaled down -->
+<!-- Unified "Online now" block with WAU widget, scaled to 50% -->
 <div style="
   display:inline-flex; align-items:center; gap:12px;
+  flex-wrap:nowrap;              /* 🚫 no wrapping */
+  white-space:nowrap;            /* 🚫 no wrapping for text */
   background:#0b1220; color:#e2e8f0;
   padding:12px 16px; border-radius:12px;
   border:1px solid rgba(148,163,184,.25);
   box-shadow:0 8px 24px rgba(0,0,0,.35);
   font-family:'Segoe UI', Roboto, Inter, Arial, sans-serif;
-  transform: scale(0.50);         /* scale to 75% of original */
-  transform-origin: left center;  /* anchor scale from the left side */
+  transform: scale(0.50);        /* scale to 50% of original */
+  transform-origin: left center; /* anchor scale from the left side */
 ">
-  <span style="font-weight:800; font-size:24px; line-height:1.1; letter-spacing:.2px;">
-    Online &nbsp;now
+  <span style="
+    font-weight:800; font-size:24px; line-height:1.1; letter-spacing:.2px;
+    white-space:nowrap;           /* ensure label itself never breaks */
+  ">
+    Online&nbsp;now
   </span>
 
   <!-- WhoIsAmongUs widget -->
