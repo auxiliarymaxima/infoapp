@@ -2,24 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Visitor Counter with VisitorBadge.io</title>
+  <title>Visitor Counter with HitCounter.app</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: system-ui, sans-serif; padding: 2rem; background: #f9fafb; }
+    body { font-family: system-ui, sans-serif; padding: 2rem; }
     header { display: flex; justify-content: space-between; align-items: center; }
-    .counter img { height: 24px; }
+    .counter { font-weight: bold; }
   </style>
 </head>
 <body>
   <header>
     <h1>InfoWars Guyana</h1>
     <div class="counter">
-      <!-- 👇 VisitorBadge embed -->
-      <img src="https://visitorbadge.io/status?path=/infowars-guyana&label=Active%20now&countColor=%2316a34a&style=flat"
-           alt="Active visitors badge" />
+      <!-- 👇 HitCounter.app embed -->
+      <script async src="https://hitcounter.app/js/live.js"
+              data-hc-id="infowars-guyana-123"
+              data-hc-label="Active now"
+              data-hc-style="pill">
+      </script>
     </div>
   </header>
 
-  <p>Welcome to InfoWars Guyana. This badge shows how many users are currently active.</p>
+  <p>Welcome! The badge above shows how many people are currently on this site.</p>
 </body>
 </html>
