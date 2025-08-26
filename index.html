@@ -1,75 +1,80 @@
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Counter Test</title>
+  <title>Visitor Counter Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    .pill-counter{display:inline-flex;gap:.5rem;padding:.35rem .6rem;border-radius:999px;border:1px solid #e2e8f0;background:#f1f5f9;font:600 12px system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #f9fafb; }
+    .pill-counter {
+      display:inline-flex; gap:.5rem; align-items:center;
+      font:600 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      padding:.35rem .6rem; border-radius:999px; white-space:nowrap;
+      background:#f1f5f9; border:1px solid #e2e8f0;
+    }
+    .pill-counter::before {
+      content:"●"; font-size:10px; color:#16a34a; /* green dot */
+    }
   </style>
 </head>
 <body>
+  <h1>InfoWars Guyana – Active Visitor Counter</h1>
   <span id="active-visitors" class="pill-counter">Loading…</span>
-<script>
-(function () {
-  const NAMESPACE = "infowars-guyana-2tA6w9kS8q"; // change to your unique value
-  const KEY = "activeVisitors";
-  const VIEW = document.getElementById("active-visitors");
-  const SESSION_FLAG = "countapi-active";
-  const BASE = "https://api.countapi.xyz";
 
-  if (!VIEW) { console.error("Missing #active-visitors element"); return; }
+  <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const NAMESPACE = "infowars-guyana-2tA6w9kS8q"; // make this unique for your site
+    const KEY = "activeVisitors";
+    const BASE = "https://api.countapi.xyz";
+    const VIEW = document.getElementById("active-visitors");
+    const SESSION_FLAG = "countapi-active";
 
-  const setText = (n) => VIEW.textContent = `Active now: ${n}`;
-  const showError = (msg) => { VIEW.textContent = "Counter offline"; console.error(msg); };
+    if (!VIEW) return;
+    const setText = (n) => { VIEW.textContent = `Active now: ${n}`; };
 
-  const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
-  const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
-  const createIfMissing = () =>
-    fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`,
-      { cache:"no-store" }
-    ).then(r=>r.json()).then(j=>console.log("createIfMissing", j)).catch(e=>console.warn("createIfMissing failed (ok if exists)", e));
+    const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
+    const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
+    const createIfMissing = () =>
+      fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`)
+        .catch(()=>{});
 
-  async function refresh(){
-    try{
-      const r = await fetch(getUrl(), { cache:"no-store" });
-      if (!r.ok) throw new Error(`GET failed ${r.status}`);
-      const d = await r.json();
-      console.log("GET", d);
-      if (typeof d.value === "number") setText(d.value);
-      else showError("No value in response");
-    }catch(e){ showError(e); }
-  }
-
-  async function incrementOnce(){
-    if (sessionStorage.getItem(SESSION_FLAG)) return;
-    try{
-      await createIfMissing();
-      const r = await fetch(incUrl(+1), { cache:"no-store" });
-      if (!r.ok) throw new Error(`INC failed ${r.status}`);
-      const d = await r.json();
-      console.log("INC", d);
-      if (typeof d.value === "number") setText(d.value);
-      sessionStorage.setItem(SESSION_FLAG, "1");
-    }catch(e){ showError(e); }
-  }
-
-  function decrementOnHide(){
-    if (!sessionStorage.getItem(SESSION_FLAG)) return;
-    const url = incUrl(-1);
-    try{
-      const blob = new Blob([], { type:"text/plain" });
-      navigator.sendBeacon(url, blob);
-    }catch(e){
-      fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
+    async function refresh(){
+      try{
+        const r = await fetch(getUrl(), { cache:"no-store" });
+        const d = await r.json();
+        if (typeof d.value === "number") setText(d.value);
+      }catch(e){ console.error("GET error:", e); }
     }
-    sessionStorage.removeItem(SESSION_FLAG);
-  }
 
-  const run = () => { refresh().then(incrementOnce); setInterval(refresh, 5000); };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
-  window.addEventListener("pagehide", decrementOnHide);
-})();
-</script>
+    async function incrementOnce(){
+      if (sessionStorage.getItem(SESSION_FLAG)) return;
+      try{
+        await createIfMissing();
+        const r = await fetch(incUrl(+1), { cache:"no-store" });
+        const d = await r.json();
+        if (typeof d.value === "number") setText(d.value);
+        sessionStorage.setItem(SESSION_FLAG, "1");
+      }catch(e){ console.error("INC error:", e); }
+    }
+
+    function decrementOnHide(){
+      if (!sessionStorage.getItem(SESSION_FLAG)) return;
+      const url = incUrl(-1);
+      try {
+        const blob = new Blob([], { type:"text/plain" });
+        navigator.sendBeacon(url, blob);
+      } catch {
+        fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
+      }
+      sessionStorage.removeItem(SESSION_FLAG);
+    }
+
+    // Run counter logic
+    refresh().then(incrementOnce);
+    setInterval(refresh, 5000);
+    window.addEventListener("pagehide", decrementOnHide);
+  });
+  </script>
 </body>
 </html>
