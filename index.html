@@ -465,6 +465,24 @@ body > main {
 </div>
 
 <div class="ads">
+  <!-- Back to top button -->
+<button id="back-to-top">↑ Back to Top</button>
+
+<script>
+  // Show/hide button when scrolling
+  const btn = document.getElementById("back-to-top");
+  window.addEventListener("scroll", () => {
+    btn.style.display = window.scrollY > 200 ? "block" : "none";
+  });
+
+  // Smooth scroll to top
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+
+
+
 
 </div>
   </main>
@@ -614,31 +632,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadNews();
   loadYouTube();
 });
-</script>
-
-
-
-  
-  <!-- Back to top button -->
-<button id="back-to-top">↑ Back to Top</button>
-
-<script>
-  // Show/hide button when scrolling
-  const btn = document.getElementById("back-to-top");
-  window.addEventListener("scroll", () => {
-    btn.style.display = window.scrollY > 200 ? "block" : "none";
-  });
-
-  // Smooth scroll to top
-  btn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-</script>
-
-
-
-
-  
+</script>  
   
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
