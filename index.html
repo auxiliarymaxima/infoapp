@@ -458,23 +458,26 @@ body > main {
 </div>
 
 <div class="ads">
+<!-- Unified "Online now" block with WAU widget -->
 <div style="
-  display:flex; 
-  align-items:center; 
-  gap:14px; 
-  font-family: 'Segoe UI', Roboto, Inter, Arial, sans-serif;
-  font-weight:800; 
-  font-size:28px; 
-  color:#1e293b;   /* dark slate for professional look */
-  line-height:1;
+  display:inline-flex; align-items:center; gap:12px;
+  background:#0b1220; color:#e2e8f0;
+  padding:12px 16px; border-radius:12px;
+  border:1px solid rgba(148,163,184,.25);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  font-family:'Segoe UI', Roboto, Inter, Arial, sans-serif;
 ">
-  <span>Online now:</span>
+  <span style="font-weight:800; font-size:24px; line-height:1.1; letter-spacing:.2px;">
+    Online now
+  </span>
 
-  <!-- Original WhoIsAmongUs snippet (kept intact) -->
-  <script id="_wauwh91x1" async src="//waust.at/p2.js?w=wh91x1"></script>
-  <noscript>
-    <img src="//whos.amung.us/p2/widget/wh91x1.png" border="0" title="Users Online" />
-  </noscript>
+  <!-- Keep WAU code exactly as given -->
+  <div style="display:flex; align-items:center;">
+    <script id="_wauwh91x1" async src="//waust.at/p2.js?w=wh91x1"></script>
+    <noscript>
+      <img src="//whos.amung.us/p2/widget/wh91x1.png" border="0" title="Users Online" />
+    </noscript>
+  </div>
 </div>
 </div>
   </main>
