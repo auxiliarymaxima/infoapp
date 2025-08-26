@@ -357,6 +357,27 @@ body > main {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
+    
+#back-to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+
+  display: none;               /* hidden until you scroll down */
+  padding: .5rem .75rem;
+  border: none;
+  border-radius: .4rem;
+  background: #111827;         /* dark gray */
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,.3);
+}
+
+#back-to-top:hover {
+  background: #2563eb;         /* blue on hover */
+}
   </style>
 </head>
 <body>
@@ -594,6 +615,31 @@ window.addEventListener("DOMContentLoaded", () => {
   loadYouTube();
 });
 </script>
+
+
+
+  
+  <!-- Back to top button -->
+<button id="back-to-top">↑ Back to Top</button>
+
+<script>
+  // Show/hide button when scrolling
+  const btn = document.getElementById("back-to-top");
+  window.addEventListener("scroll", () => {
+    btn.style.display = window.scrollY > 200 ? "block" : "none";
+  });
+
+  // Smooth scroll to top
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+
+
+
+
+  
+  
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
 </footer>  
