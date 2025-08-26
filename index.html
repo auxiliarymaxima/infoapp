@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Visitor Counter with HitCounter.app</title>
+  <title>Live Visitor Counter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: system-ui, sans-serif; padding: 2rem; }
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #f9fafb; }
     header { display: flex; justify-content: space-between; align-items: center; }
     .counter { font-weight: bold; }
   </style>
@@ -14,15 +14,23 @@
   <header>
     <h1>InfoWars Guyana</h1>
     <div class="counter">
-      <!-- 👇 HitCounter.app embed -->
-      <script async src="https://hitcounter.app/js/live.js"
-              data-hc-id="infowars-guyana-123"
-              data-hc-label="Active now"
-              data-hc-style="pill">
+      <!-- 👇 Whos.amung.us live visitor counter -->
+      <script id="_wau"></script>
+      <script>
+        var _wau = _wau || [];
+        // "small" = compact widget, "yourid" = your personal widget ID, "online" = mode
+        _wau.push(["small", "yourid", "online"]);
+        (function() {
+          var s=document.createElement("script"); s.async=true;
+          s.src="//waust.at/s.js";
+          document.getElementsByTagName("head")[0].appendChild(s);
+        })();
       </script>
     </div>
   </header>
 
-  <p>Welcome! The badge above shows how many people are currently on this site.</p>
+  <main>
+    <p>Welcome! The widget above shows how many people are online right now.</p>
+  </main>
 </body>
 </html>
