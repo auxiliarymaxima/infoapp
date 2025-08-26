@@ -357,21 +357,6 @@ body > main {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-
-    .pill-counter{
-  display:inline-flex; align-items:center; gap:.5rem;
-  font:600 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-  padding:.35rem .6rem; border-radius:999px; white-space:nowrap;
-  background:#f1f5f9; /* slate-100 */
-  border:1px solid #e2e8f0; /* slate-200 */
-}
-.pill-counter::before{
-  content:"●"; font-size:10px;
-  /* no specific color to keep it neutral – browsers will pick default */
-}
-@media (prefers-color-scheme: dark){
-  .pill-counter{ background:#0f172a; border-color:#1e293b; color:#e2e8f0; }
-}
   </style>
 </head>
 <body>
@@ -403,7 +388,12 @@ body > main {
     </span>
     <small>All the news in one place</small>
   </div>
+  
+  <!-- Counter -->
+  <script id="_wauwh91x1" async src="//waust.at/p2.js?w=wh91x1"></script><noscript><img src="//whos.amung.us/p2/widget/wh91x1.png" border="0" title="Users Online" /></noscript>
 
+
+  
   <!-- EPapers toggle with dropdown correctly positioned -->
   <div class="menu-toggle-container">
     <input type="checkbox" id="menu-toggle" />
@@ -602,72 +592,8 @@ window.addEventListener("DOMContentLoaded", () => {
   loadYouTube();
 });
 </script>
-
-<script>
-(() => {
-  // Use a hard-to-guess namespace to reduce tampering
-  const NAMESPACE = "infowars-guyana-2tA6w9kS8q";  // change me
-  const KEY = "activeVisitors";                     // or per-page: `active:${location.pathname.replace(/\W+/g,"_")}`
-  const VIEW = document.getElementById("active-visitors");
-  const SESSION_FLAG = "countapi-active";
-  const BASE = "https://api.countapi.xyz";
-
-  if (!VIEW) return;
-
-  const getUrl = () => `${BASE}/get/${NAMESPACE}/${KEY}`;
-  const incUrl = (n=1) => `${BASE}/update/${NAMESPACE}/${KEY}/?amount=${n}`;
-  const createIfMissing = () =>
-    fetch(`${BASE}/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`)
-      .catch(()=>{});
-
-  const setText = (n) => VIEW.textContent = `Active now: ${n}`;
-
-  async function refresh(){
-    try{
-      const r = await fetch(getUrl(), { cache:"no-store" });
-      const d = await r.json();
-      if (typeof d.value === "number") setText(d.value);
-    }catch{}
-  }
-
-  async function incrementOnce(){
-    if (sessionStorage.getItem(SESSION_FLAG)) return;
-    try{
-      await createIfMissing();
-      const r = await fetch(incUrl(+1), { cache:"no-store" });
-      const d = await r.json();
-      if (typeof d.value === "number") setText(d.value);
-      sessionStorage.setItem(SESSION_FLAG, "1");
-    }catch{}
-  }
-
-  function decrementOnHide(){
-    if (!sessionStorage.getItem(SESSION_FLAG)) return;
-    const url = incUrl(-1);
-    try{
-      const blob = new Blob([], { type:"text/plain" });
-      navigator.sendBeacon(url, blob);
-    }catch{
-      fetch(url, { cache:"no-store", keepalive:true }).catch(()=>{});
-    }
-    sessionStorage.removeItem(SESSION_FLAG);
-  }
-
-  refresh().then(incrementOnce);
-  setInterval(refresh, 5000);
-  window.addEventListener("pagehide", decrementOnHide);
-})();
-</script>
-
-  
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
-</footer>
-    
-<!-- COUNTER -->
-<div class="topbar-right">
-  <span id="active-visitors" class="pill-counter" aria-live="polite">…</span>
-</div>
-  
+</footer>  
 </body>
 </html>
