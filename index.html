@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Live Visitor Counter</title>
+  <title>Live Visitor Counter (Demo)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: system-ui, sans-serif; padding: 2rem; background: #f9fafb; }
@@ -14,12 +14,12 @@
   <header>
     <h1>InfoWars Guyana</h1>
     <div class="counter">
-      <!-- 👇 Whos.amung.us live visitor counter -->
+      <!-- 👇 Whos.amung.us live visitor counter (demo widget) -->
       <script id="_wau"></script>
       <script>
         var _wau = _wau || [];
-        // "small" = compact widget, "yourid" = your personal widget ID, "online" = mode
-        _wau.push(["small", "yourid", "online"]);
+        // "small" = compact widget, "0f46s3yb2x" = demo ID, "online" = mode
+        _wau.push(["small", "0f46s3yb2x", "online"]);
         (function() {
           var s=document.createElement("script"); s.async=true;
           s.src="//waust.at/s.js";
@@ -30,7 +30,8 @@
   </header>
 
   <main>
-    <p>Welcome! The widget above shows how many people are online right now.</p>
+    <p>This demo badge shows the number of visitors currently online.</p>
+    <p>To get your own unique ID, go to <a href="https://whos.amung.us" target="_blank">whos.amung.us</a> and generate a widget.</p>
   </main>
 </body>
 </html>
