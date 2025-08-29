@@ -165,15 +165,6 @@ body > main {
       font-size: 12px;
       color: #333;
     }
-    .ads {
-      background: white;
-      text-align: center;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 5px;
-      color: white;
-      margin: 20px 10px 10px;
-    }
     .preview-strip {
       display: flex;
       flex-wrap: nowrap;
@@ -378,6 +369,35 @@ body > main {
 #back-to-top:hover {
   background: #2563eb;         /* blue on hover */
 }
+    
+.ads {
+  background: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  color: black;  /* changed to black so text is visible */
+  margin: 20px 10px 10px;
+
+  max-height: 50px;   /* collapsed height */
+  overflow: hidden;   /* hides extra content */
+  transition: max-height 0.5s ease; /* smooth expand */
+}
+
+.ads.expanded {
+  max-height: 500px;  /* expanded height */
+}
+
+.toggle-btn {
+  display: block;
+  margin: 5px auto;
+  background: #0b1220;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -480,10 +500,29 @@ body > main {
   </div>
 </div> 
   <script src="https://minnit.chat/js/embed.js?c=1752216300" defer></script><span style="display: none;" class="minnit-chat-sembed" data-chatname="https://organizations.minnit.chat/238777848446982/c/Main?embed" data-style="width:90%; height:500px; max-height:90vh;" data-version="1.52">Chat</span>
-  </div> 
+ <button class="toggle-btn" onclick="toggleAd()">Read more</button>
+</div> 
+
+    <div class="ads">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+      <button class="toggle-btn" onclick="toggleAd()">Read more</button>
+      </div> 
+
+      
       </main>
 
 <script>
+  function toggleAd() {
+  const adBox = document.getElementById("adBox");
+  adBox.classList.toggle("expanded");
+  
+  const btn = document.querySelector(".toggle-btn");
+  btn.textContent = adBox.classList.contains("expanded") ? "Show less" : "Read more";
+  }
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
