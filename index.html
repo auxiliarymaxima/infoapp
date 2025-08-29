@@ -384,11 +384,43 @@ body > main {
   transition: max-height 0.5s ease; /* smooth expand */
 }
 
-.ads.expanded {
-  max-height: 500px;  /* expanded height */
+.ads {
+  background: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  color: black; /* text visible */
+  margin: 20px 10px 10px;
+
+  max-height: 60px;          /* collapsed height */
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.5s ease;
 }
 
-.toggle-btn {
+/* Add gradient fade at bottom when collapsed */
+.ads::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, white, transparent);
+  display: block;
+  pointer-events: none;
+}
+
+.ads.expanded {
+  max-height: 1000px; /* Large enough to reveal content */
+}
+
+.ads.expanded::after {
+  display: none; /* remove fade when expanded */
+}
+
+#toggleBtn {
   display: block;
   margin: 5px auto;
   background: #0b1220;
@@ -477,7 +509,7 @@ body > main {
   </div>
 </div>
 
-<div class="ads">
+<div class="ads" id="adBox"> 
 <!-- Online Now block, left-aligned, slim -->
 <div style="display:flex; justify-content:flex-start; margin:0;">
 
@@ -500,29 +532,20 @@ body > main {
   </div>
 </div> 
   <script src="https://minnit.chat/js/embed.js?c=1752216300" defer></script><span style="display: none;" class="minnit-chat-sembed" data-chatname="https://organizations.minnit.chat/238777848446982/c/Main?embed" data-style="width:90%; height:500px; max-height:90vh;" data-version="1.52">Chat</span>
- <button class="toggle-btn" onclick="toggleAd()">Read more</button>
-</div> 
-
-    <div class="ads">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-      <button class="toggle-btn" onclick="toggleAd()">Read more</button>
-      </div> 
-
-      
+<button id="toggleBtn">Read more</button>
+</div>      
       </main>
 
 <script>
-  function toggleAd() {
   const adBox = document.getElementById("adBox");
+const btn = document.getElementById("toggleBtn");
+
+btn.addEventListener("click", () => {
   adBox.classList.toggle("expanded");
-  
-  const btn = document.querySelector(".toggle-btn");
-  btn.textContent = adBox.classList.contains("expanded") ? "Show less" : "Read more";
-  }
+  btn.textContent = adBox.classList.contains("expanded")
+    ? "Show less"
+    : "Read more";
+});
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
