@@ -372,55 +372,19 @@ body > main {
     
 .ads {
   background: white;
-  text-align: center;
-  font-weight: bold;
-  padding: 10px;
   border-radius: 5px;
-  color: black;  /* changed to black so text is visible */
   margin: 20px 10px 10px;
-
-  max-height: 50px;   /* collapsed height */
-  overflow: hidden;   /* hides extra content */
-  transition: max-height 0.5s ease; /* smooth expand */
-}
-
-.ads {
-  background: white;
-  text-align: center;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
-  color: black; /* text visible */
-  margin: 20px 10px 10px;
-
-  max-height: 60px;          /* collapsed height */
   overflow: hidden;
-  position: relative;
   transition: max-height 0.5s ease;
-}
-
-/* Add gradient fade at bottom when collapsed */
-.ads::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: linear-gradient(to top, white, transparent);
-  display: block;
-  pointer-events: none;
+  
+  max-height: 100px;   /* collapsed height */
 }
 
 .ads.expanded {
-  max-height: 1000px; /* Large enough to reveal content */
+  max-height: 500px;   /* expanded height (tweak as needed) */
 }
 
-.ads.expanded::after {
-  display: none; /* remove fade when expanded */
-}
-
-#toggleBtn {
+#toggleChatBtn {
   display: block;
   margin: 5px auto;
   background: #0b1220;
@@ -509,7 +473,7 @@ body > main {
   </div>
 </div>
 
-<div class="ads" id="adBox"> 
+<div class="ads" id="chatBox"> 
 <!-- Online Now block, left-aligned, slim -->
 <div style="display:flex; justify-content:flex-start; margin:0;">
 
@@ -532,19 +496,19 @@ body > main {
   </div>
 </div> 
   <script src="https://minnit.chat/js/embed.js?c=1752216300" defer></script><span style="display: none;" class="minnit-chat-sembed" data-chatname="https://organizations.minnit.chat/238777848446982/c/Main?embed" data-style="width:90%; height:500px; max-height:90vh;" data-version="1.52">Chat</span>
-<button id="toggleBtn">Read more</button>
+<button id="toggleChatBtn">Read more</button>
 </div>      
       </main>
 
 <script>
-  const adBox = document.getElementById("adBox");
-const btn = document.getElementById("toggleBtn");
+  const chatBox = document.getElementById("chatBox");
+const btn = document.getElementById("toggleChatBtn");
 
 btn.addEventListener("click", () => {
-  adBox.classList.toggle("expanded");
-  btn.textContent = adBox.classList.contains("expanded")
-    ? "Show less"
-    : "Read more";
+  chatBox.classList.toggle("expanded");
+  btn.textContent = chatBox.classList.contains("expanded")
+    ? "Collapse chat"
+    : "Expand chat";
 });
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
