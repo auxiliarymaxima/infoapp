@@ -731,64 +731,6 @@ backToTop.addEventListener("click", () => {
 });
 </script>
 
-<!-- Floating video -->
-<div id="infowars-floater" style="
-  position:fixed; bottom:14px; right:14px;
-  width:170px; aspect-ratio:16/9;
-  background:#0b1220; border:2px solid #f0c000;
-  border-radius:14px; overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);
-  z-index:9999;">
-
-  <!-- Always-on drag overlay -->
-  <div id="iw-drag-overlay" style="
-    position:absolute; inset:0;
-    cursor:move; background:transparent; z-index:2;"></div>
-
-  <iframe width="100%" height="100%"
-    src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
-    frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-    referrerpolicy="origin-when-cross-origin" style="display:block;">
-  </iframe>
-</div>
-
-<script>
-(() => {
-  const box = document.getElementById('infowars-floater');
-  const overlay = document.getElementById('iw-drag-overlay');
-
-  let dragging = false, sx=0, sy=0, sl=0, st=0;
-
-  function startDrag(e){
-    dragging = true;
-    const p = e.touches ? e.touches[0] : e;
-    sx = p.clientX; sy = p.clientY;
-    const r = box.getBoundingClientRect();
-    sl = r.left; st = r.top;
-    e.preventDefault();
-  }
-  function onMove(e){
-    if(!dragging) return;
-    const p = e.touches ? e.touches[0] : e;
-    const nl = Math.min(window.innerWidth - box.offsetWidth - 6, Math.max(6, sl + (p.clientX - sx)));
-    const nt = Math.min(window.innerHeight - box.offsetHeight - 6, Math.max(6, st + (p.clientY - sy)));
-    box.style.left = nl + 'px';
-    box.style.top  = nt + 'px';
-    box.style.right = 'auto';
-    box.style.bottom = 'auto';
-    e.preventDefault();
-  }
-  function endDrag(){ dragging = false; }
-
-  overlay.addEventListener('mousedown', startDrag);
-  overlay.addEventListener('touchstart', startDrag, {passive:false});
-  window.addEventListener('mousemove', onMove, {passive:false});
-  window.addEventListener('touchmove', onMove, {passive:false});
-  window.addEventListener('mouseup', endDrag);
-  window.addEventListener('touchend', endDrag);
-})();
-</script>
-  
 </footer>  
 </body>
 </html>
