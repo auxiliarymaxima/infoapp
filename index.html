@@ -732,8 +732,7 @@ backToTop.addEventListener("click", () => {
 </script>
 
 <!-- Floating video -->
-  
-  <div id="infowars-floater" style="
+<div id="infowars-floater" style="
   position:fixed; bottom:14px; right:14px;
   width:170px; aspect-ratio:16/9;
   background:#0b1220; border:2px solid #f0c000;
@@ -741,18 +740,10 @@ backToTop.addEventListener("click", () => {
   box-shadow:0 8px 24px rgba(0,0,0,.4);
   z-index:9999;">
 
-  <!-- Drag overlay (hidden by default) -->
+  <!-- Always-on drag overlay -->
   <div id="iw-drag-overlay" style="
-    position:absolute; inset:0; display:none;
+    position:absolute; inset:0;
     cursor:move; background:transparent; z-index:2;"></div>
-
-  <!-- Toggle button -->
-  <button id="iw-drag-toggle" title="Toggle drag mode" style="
-    position:absolute; top:6px; right:6px; z-index:3;
-    background:rgba(0,0,0,.6); color:#f0c000; border:0;
-    border-radius:8px; padding:4px 8px; font:700 12px/1 system-ui;">
-    ⇕
-  </button>
 
   <iframe width="100%" height="100%"
     src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
@@ -765,9 +756,7 @@ backToTop.addEventListener("click", () => {
 (() => {
   const box = document.getElementById('infowars-floater');
   const overlay = document.getElementById('iw-drag-overlay');
-  const toggle = document.getElementById('iw-drag-toggle');
 
-  let dragMode = false;
   let dragging = false, sx=0, sy=0, sl=0, st=0;
 
   function startDrag(e){
@@ -781,26 +770,19 @@ backToTop.addEventListener("click", () => {
   function onMove(e){
     if(!dragging) return;
     const p = e.touches ? e.touches[0] : e;
-    const nl = sl + (p.clientX - sx);
-    const nt = st + (p.clientY - sy);
+    const nl = Math.min(window.innerWidth - box.offsetWidth - 6, Math.max(6, sl + (p.clientX - sx)));
+    const nt = Math.min(window.innerHeight - box.offsetHeight - 6, Math.max(6, st + (p.clientY - sy)));
     box.style.left = nl + 'px';
-    box.style.top = nt + 'px';
+    box.style.top  = nt + 'px';
     box.style.right = 'auto';
     box.style.bottom = 'auto';
+    e.preventDefault();
   }
   function endDrag(){ dragging = false; }
 
-  toggle.addEventListener('click', () => {
-    dragMode = !dragMode;
-    overlay.style.display = dragMode ? 'block' : 'none';
-    toggle.textContent = dragMode ? '✓' : '⇕';
-    toggle.title = dragMode ? 'Drag mode ON (tap ✓ to exit)' : 'Toggle drag mode';
-  });
-
-  // Drag handlers on the overlay (covers the iframe when visible)
   overlay.addEventListener('mousedown', startDrag);
   overlay.addEventListener('touchstart', startDrag, {passive:false});
-  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mousemove', onMove, {passive:false});
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('mouseup', endDrag);
   window.addEventListener('touchend', endDrag);
