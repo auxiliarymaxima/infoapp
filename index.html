@@ -732,23 +732,23 @@ backToTop.addEventListener("click", () => {
 </script>
 
   <!-- Floating video-->
-<div id="infowars-floater" style="
-  position:fixed; bottom:14px; right:14px;
-  width:170px; aspect-ratio:16/9;
+// Scroll smoothly to top when clicked<div id="infowars-floater" style="
+  position:fixed; bottom:14px; left:14px;
+  width:160px; height:160px;
   background:#0b1220; border:2px solid #f0c000;
-  border-radius:14px; overflow:hidden;
+  border-radius:50%; overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.4);
   z-index:9999; opacity:0.5;">
 
   <!-- Always-on drag overlay -->
   <div id="iw-drag-overlay" style="
     position:absolute; inset:0;
-    cursor:move; background:transparent; z-index:2;"></div>
+    cursor:move; background:transparent; z-index:2; border-radius:50%;"></div>
 
   <iframe width="100%" height="100%"
     src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
     frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-    referrerpolicy="origin-when-cross-origin" style="display:block;">
+    referrerpolicy="origin-when-cross-origin" style="display:block; border-radius:50%;">
   </iframe>
 </div>
 
