@@ -730,6 +730,88 @@ backToTop.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 </script>
+
+
+ <!-- Floating Autoplay Video for InfoWars Guyana -->
+<div id="infowars-floater" style="
+  position:fixed; inset:auto 14px 14px auto;
+  width:170px; aspect-ratio:16/9;
+  background:#0b1220; border:2px solid #f0c000; /* Guyana yellow accent */
+  border-radius:14px; overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  z-index:9999; user-select:none; touch-action:none;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Segoe UI', Roboto, Inter, Arial, sans-serif;">
+  
+  <iframe id="infowars-vid" width="100%" height="100%" 
+    src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
+    title="InfoWars Guyana Live" frameborder="0"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    referrerpolicy="origin-when-cross-origin">
+  </iframe>
+
+  <!-- Controls -->
+  <div style="position:absolute; top:6px; right:6px; display:flex; gap:6px;">
+    <button id="iw-min" title="Minimize" style="
+      background:rgba(0,0,0,.55); color:#f0c000; border:0; border-radius:8px;
+      padding:6px 8px; font:700 12px/1 system-ui;">▢</button>
+    <button id="iw-close" title="Close" style="
+      background:rgba(0,0,0,.55); color:#f0c000; border:0; border-radius:8px;
+      padding:6px 8px; font:700 12px/1 system-ui;">✕</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const floater = document.getElementById('infowars-floater');
+  const iframe  = document.getElementById('infowars-vid');
+  const btnMin  = document.getElementById('iw-min');
+  const btnClose= document.getElementById('iw-close');
+
+  // Dragging
+  let dragging=false,startX=0,startY=0,startLeft=0,startTop=0;
+  const onDown=(e)=>{
+    const p=(e.touches?e.touches[0]:e);
+    dragging=true; startX=p.clientX; startY=p.clientY;
+    const rect=floater.getBoundingClientRect();
+    startLeft=rect.left; startTop=rect.top;
+  };
+  const onMove=(e)=>{
+    if(!dragging)return;
+    const p=(e.touches?e.touches[0]:e);
+    const dx=p.clientX-startX; const dy=p.clientY-startY;
+    floater.style.left=(startLeft+dx)+'px';
+    floater.style.top=(startTop+dy)+'px';
+    floater.style.right='auto'; floater.style.bottom='auto';
+  };
+  const onUp=()=>dragging=false;
+
+  floater.addEventListener('pointerdown',onDown);
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',onUp);
+  floater.addEventListener('touchstart',onDown,{passive:true});
+  window.addEventListener('touchmove',onMove,{passive:false});
+  window.addEventListener('touchend',onUp);
+
+  // Minimize
+  let minimized=false;
+  btnMin.addEventListener('click',()=>{
+    minimized=!minimized;
+    floater.style.width=minimized?'110px':'170px';
+    floater.style.opacity=minimized?'.8':'1';
+    btnMin.textContent=minimized?'▣':'▢';
+  });
+
+  // Close
+  btnClose.addEventListener('click',()=>{
+    floater.style.display='none';
+    iframe.src=iframe.src; // reset to stop playback
+  });
+})();
+      </script> 
+
+
+  
 </footer>  
 </body>
 </html>
