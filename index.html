@@ -504,12 +504,8 @@ body > main {
   <script src="https://minnit.chat/js/embed.js?c=1752216300" defer></script><span style="display: none;" class="minnit-chat-sembed" data-chatname="https://organizations.minnit.chat/238777848446982/c/Main?embed" data-style="width:90%; height:300px; max-height:90vh;" data-version="1.52">Chat</span>
 </div> 
 
-
-
-
-    
-<!-- Poll Preview Card (WhenAvailable) -->
-<div class="poll-card" data-poll-url="https://whenavailable.com/invite/4e0ud80osWCejgTSByug">
+<!-- Poll Link Card -->
+<div class="poll-card">
   <div class="poll-header">
     <div class="dot"></div>
     <span class="eyebrow">Community Poll</span>
@@ -517,27 +513,15 @@ body > main {
 
   <h3 class="poll-title">Have your say 👇</h3>
   <p class="poll-desc">
-    Tap to view dates/options and cast your vote. Results update live.
+    Tap below to view the poll and cast your vote.
   </p>
 
-  <!-- Attempt an embed first (graceful fallback below) -->
-  <div class="poll-embed">
-    <iframe
-      title="WhenAvailable Poll"
-      loading="lazy"
-      referrerpolicy="no-referrer"
-      sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-    ></iframe>
-    <div class="embed-fallback hidden">
-      <a class="poll-btn" target="_blank" rel="noopener"
-         href="https://whenavailable.com/invite/4e0ud80osWCejgTSByug">
-        Open poll & vote
-      </a>
-      <p class="poll-footnote">Opens in a new tab if embedding isn’t allowed.</p>
-    </div>
-  </div>
+  <a class="poll-btn" target="_blank" rel="noopener"
+     href="https://whenavailable.com/invite/4e0ud80osWCejgTSByug">
+    Open Poll & Vote
+  </a>
 </div>
-    
+
 <style>
   .poll-card{
     --bg:#0b1220; --fg:#e2e8f0; --muted:#94a3b8; --line:rgba(148,163,184,.25);
@@ -546,62 +530,24 @@ body > main {
     border:1px solid var(--line); border-radius:16px; padding:16px;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
     max-width:640px; margin:12px auto; box-shadow:0 6px 20px rgba(0,0,0,.25);
+    text-align:center;
   }
-  .poll-header{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .poll-header{display:flex; align-items:center; gap:8px; margin-bottom:6px; justify-content:center;}
   .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent);}
   .eyebrow{font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:var(--muted);}
   .poll-title{font-size:20px; margin:6px 0 4px; line-height:1.2;}
   .poll-desc{margin:0 0 12px; color:var(--muted); font-size:14px;}
 
-  .poll-embed{background:rgba(148,163,184,.06); border:1px dashed var(--line);
-    border-radius:12px; padding:0; overflow:hidden}
-  .poll-embed iframe{width:100%; height:360px; border:0; display:block}
-
-  .embed-fallback{padding:14px; text-align:center}
-  .hidden{display:none}
-
   .poll-btn{
-    display:inline-block; padding:10px 14px; border-radius:10px;
+    display:inline-block; padding:12px 18px; border-radius:10px;
     background:linear-gradient(180deg, #60a5fa, #2563eb);
     color:white; text-decoration:none; font-weight:700; letter-spacing:.2px;
     border:0; box-shadow:0 4px 12px rgba(37, 99, 235, .45);
+    transition: all .2s ease;
   }
+  .poll-btn:hover{opacity:.9}
   .poll-btn:active{transform:translateY(1px)}
-  .poll-footnote{color:var(--muted); font-size:12px; margin:8px 0 0}
-  @media (max-width:480px){ .poll-embed iframe{height:300px} }
 </style>
-
-<script>
-(function(){
-  const card = document.currentScript.previousElementSibling.previousElementSibling; // style then card
-  const pollUrl = card?.getAttribute('data-poll-url');
-  const iframe = card.querySelector('iframe');
-  const fallback = card.querySelector('.embed-fallback');
-
-  // Try embedding. Many sites block framing; if it errors or never loads, show fallback.
-  let loaded = false;
-  if (iframe && pollUrl){
-    // Some providers reject being framed; this may still fail silently.
-    iframe.src = pollUrl;
-    iframe.addEventListener('load', () => { loaded = true; });
-    // If not loaded within 2.2s, assume blocked & show fallback.
-    setTimeout(() => {
-      if (!loaded){
-        iframe.remove();
-        fallback.classList.remove('hidden');
-      }
-    }, 2200);
-  } else {
-    fallback.classList.remove('hidden');
-  }
-})();
-</script>
-
-
-
-
-
-    
       </main>
 
 <script>
