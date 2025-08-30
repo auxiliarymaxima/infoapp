@@ -732,15 +732,16 @@ backToTop.addEventListener("click", () => {
 </script>
 
   <!-- Floating video-->
- <div id="infowars-floater" style="
+<div id="infowars-floater" style="
   position:fixed; bottom:14px; left:14px;
-  width:100px; height:100px;
+  width:160px; height:160px;
   background:#0b1220; border:2px solid #f0c000;
   border-radius:50%; overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.4);
-  z-index:9999; opacity:0.8;">
+  z-index:9999; opacity:0.5;
+  transition: width .18s ease, height .18s ease, left .18s ease, top .18s ease;">
 
-  <!-- Always-on drag overlay -->
+  <!-- Always-on drag/tap overlay -->
   <div id="iw-drag-overlay" style="
     position:absolute; inset:0;
     cursor:move; background:transparent; z-index:2; border-radius:50%;"></div>
@@ -757,28 +758,86 @@ backToTop.addEventListener("click", () => {
   const box = document.getElementById('infowars-floater');
   const overlay = document.getElementById('iw-drag-overlay');
 
-  let dragging = false, sx=0, sy=0, sl=0, st=0;
+  const BASE = 160;              // base diameter (px)
+  const SCALE = 2;               // expand factor (2x)
+  let expanded = false;
+
+  let dragging = false, sx=0, sy=0, sl=0, st=0, downTime=0, lastX=0, lastY=0;
+
+  function clamp(pos, size, max) {
+    return Math.min(max - size - 6, Math.max(6, pos));
+  }
+
+  function applySize() {
+    const target = expanded ? BASE * SCALE : BASE;
+    // keep inside viewport after resize
+    const rect = box.getBoundingClientRect();
+    let left = rect.left;
+    let top  = rect.top;
+
+    left = clamp(left, target, window.innerWidth);
+    top  = clamp(top,  target, window.innerHeight);
+
+    box.style.left = left + 'px';
+    box.style.top  = top  + 'px';
+    box.style.width  = target + 'px';
+    box.style.height = target + 'px';
+  }
+
+  function toggleSize() {
+    expanded = !expanded;
+    applySize();
+  }
+
+  function pointFromEvent(e) {
+    if (e.touches && e.touches[0]) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    if (e.changedTouches && e.changedTouches[0]) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
 
   function startDrag(e){
     dragging = true;
-    const p = e.touches ? e.touches[0] : e;
-    sx = p.clientX; sy = p.clientY;
+    const p = pointFromEvent(e);
+    sx = p.x; sy = p.y;
+    lastX = p.x; lastY = p.y;
     const r = box.getBoundingClientRect();
     sl = r.left; st = r.top;
+    downTime = Date.now();
     e.preventDefault();
   }
+
   function onMove(e){
     if(!dragging) return;
-    const p = e.touches ? e.touches[0] : e;
-    const nl = Math.min(window.innerWidth - box.offsetWidth - 6, Math.max(6, sl + (p.clientX - sx)));
-    const nt = Math.min(window.innerHeight - box.offsetHeight - 6, Math.max(6, st + (p.clientY - sy)));
+    const p = pointFromEvent(e);
+    lastX = p.x; lastY = p.y;
+
+    const nl = clamp(sl + (p.x - sx), box.offsetWidth,  window.innerWidth);
+    const nt = clamp(st + (p.y - sy), box.offsetHeight, window.innerHeight);
+
     box.style.left = nl + 'px';
     box.style.top  = nt + 'px';
     box.style.right = 'auto';
     box.style.bottom = 'auto';
     e.preventDefault();
   }
-  function endDrag(){ dragging = false; }
+
+  function endDrag(e){
+    const elapsed = Date.now() - downTime;
+    const dx = (lastX - sx);
+    const dy = (lastY - sy);
+    const dist = Math.hypot(dx, dy);
+
+    dragging = false;
+
+    // Treat quick, tiny movement as a TAP -> toggle size
+    if (elapsed < 300 && dist < 6) {
+      toggleSize();
+    }
+  }
+
+  // init position to match inline bottom/left if not yet moved
+  box.style.left = box.getBoundingClientRect().left + 'px';
+  box.style.top  = box.getBoundingClientRect().top  + 'px';
 
   overlay.addEventListener('mousedown', startDrag);
   overlay.addEventListener('touchstart', startDrag, {passive:false});
