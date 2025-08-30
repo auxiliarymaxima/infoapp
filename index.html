@@ -739,46 +739,73 @@ backToTop.addEventListener("click", () => {
   background:#0b1220; border:2px solid #f0c000;
   border-radius:14px; overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.4);
-  z-index:9999; cursor:move;">
+  z-index:9999;">
+
+  <!-- Drag overlay (hidden by default) -->
+  <div id="iw-drag-overlay" style="
+    position:absolute; inset:0; display:none;
+    cursor:move; background:transparent; z-index:2;"></div>
+
+  <!-- Toggle button -->
+  <button id="iw-drag-toggle" title="Toggle drag mode" style="
+    position:absolute; top:6px; right:6px; z-index:3;
+    background:rgba(0,0,0,.6); color:#f0c000; border:0;
+    border-radius:8px; padding:4px 8px; font:700 12px/1 system-ui;">
+    ⇕
+  </button>
 
   <iframe width="100%" height="100%"
     src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
     frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-    referrerpolicy="origin-when-cross-origin">
+    referrerpolicy="origin-when-cross-origin" style="display:block;">
   </iframe>
 </div>
 
 <script>
 (() => {
-  const floater = document.getElementById('infowars-floater');
-  let dragging=false, startX=0, startY=0, startLeft=0, startTop=0;
+  const box = document.getElementById('infowars-floater');
+  const overlay = document.getElementById('iw-drag-overlay');
+  const toggle = document.getElementById('iw-drag-toggle');
 
-  const down = (e) => {
-    dragging=true;
-    const p=e.touches?e.touches[0]:e;
-    startX=p.clientX; startY=p.clientY;
-    const rect=floater.getBoundingClientRect();
-    startLeft=rect.left; startTop=rect.top;
+  let dragMode = false;
+  let dragging = false, sx=0, sy=0, sl=0, st=0;
+
+  function startDrag(e){
+    dragging = true;
+    const p = e.touches ? e.touches[0] : e;
+    sx = p.clientX; sy = p.clientY;
+    const r = box.getBoundingClientRect();
+    sl = r.left; st = r.top;
     e.preventDefault();
-  };
-  const move = (e) => {
+  }
+  function onMove(e){
     if(!dragging) return;
-    const p=e.touches?e.touches[0]:e;
-    floater.style.left=(startLeft+(p.clientX-startX))+'px';
-    floater.style.top =(startTop +(p.clientY-startY))+'px';
-    floater.style.right='auto'; floater.style.bottom='auto';
-  };
-  const up = ()=> dragging=false;
+    const p = e.touches ? e.touches[0] : e;
+    const nl = sl + (p.clientX - sx);
+    const nt = st + (p.clientY - sy);
+    box.style.left = nl + 'px';
+    box.style.top = nt + 'px';
+    box.style.right = 'auto';
+    box.style.bottom = 'auto';
+  }
+  function endDrag(){ dragging = false; }
 
-  floater.addEventListener('mousedown',down);
-  floater.addEventListener('touchstart',down,{passive:false});
-  window.addEventListener('mousemove',move);
-  window.addEventListener('touchmove',move,{passive:false});
-  window.addEventListener('mouseup',up);
-  window.addEventListener('touchend',up);
+  toggle.addEventListener('click', () => {
+    dragMode = !dragMode;
+    overlay.style.display = dragMode ? 'block' : 'none';
+    toggle.textContent = dragMode ? '✓' : '⇕';
+    toggle.title = dragMode ? 'Drag mode ON (tap ✓ to exit)' : 'Toggle drag mode';
+  });
+
+  // Drag handlers on the overlay (covers the iframe when visible)
+  overlay.addEventListener('mousedown', startDrag);
+  overlay.addEventListener('touchstart', startDrag, {passive:false});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
 })();
 </script>
-
   
 </footer>  
 </body>
