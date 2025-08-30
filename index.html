@@ -349,25 +349,28 @@ body > main {
 }
 
     
-#back-to-top {
+/* Style for Back to Top button */
+#backToTop {
   position: fixed;
-  right: 5rem;
-  bottom: 5rem;
+  bottom: 20px;
+  right: 20px;
   z-index: 1000;
-
-  display: none;               /* hidden until you scroll down */
-  padding: .5rem .75rem;
-  border: none;
-  border-radius: .4rem;
-  background:red;         /* dark gray */
+  font-size: 20px;
+  background: #0b1220;
   color: #fff;
-  font-weight: bold;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,.3);
+  display: none; /* hidden by default */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#back-to-top:hover {
-  background: #2563eb;         /* blue on hover */
+#backToTop:hover {
+  background: #1e293b;
+  transform: translateY(-3px);
 }
     
 .ads {
@@ -661,20 +664,26 @@ window.addEventListener("DOMContentLoaded", () => {
   
 <footer>
   © 2025 InfoWarsGY. All rights reserved.
-    <!-- Back to top button -->
-<button id="back-to-top">↑ Back to Top</button>
+<!-- Back to Top Button -->
+<button id="backToTop" title="Go to top">↑</button>
 
 <script>
-  // Show/hide button when scrolling
-  const btn = document.getElementById("back-to-top");
-  window.addEventListener("scroll", () => {
-    btn.style.display = window.scrollY > 200 ? "block" : "none";
-  });
+// Get button
+const backToTop = document.getElementById("backToTop");
 
-  // Smooth scroll to top
-  btn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+// Show button when scrolling down 200px
+window.onscroll = function() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    backToTop.style.display = "block";
+  } else {
+    backToTop.style.display = "none";
+  }
+};
+
+// Scroll smoothly to top when clicked
+backToTop.onclick = function() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 </script>
 </footer>  
 </body>
