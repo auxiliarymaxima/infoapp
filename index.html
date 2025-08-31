@@ -544,16 +544,6 @@ body > main {
       </main>
 
 <script>
-const chatBox = document.getElementById("chatBox");
-const btn = document.getElementById("toggleChatBtn");
-
-btn.addEventListener("click", () => {
-  chatBox.classList.toggle("expanded");
-  btn.textContent = chatBox.classList.contains("expanded")
-    ? "Collapse chat"
-    : "Expand chat";
-});
-  
 function toggleSection(sectionId, previewId) {
   const section = document.getElementById(sectionId);
   const preview = document.getElementById(previewId);
