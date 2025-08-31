@@ -740,11 +740,11 @@ backToTop.addEventListener("click", () => {
 
   <!-- Circular bubble (clips iframe) -->
   <div id="iw-bubble" style="
-    width:160px; height:160px;
+    width:100px; height:100px;
     background:#0b1220; border:2px solid #f0c000;
     border-radius:50%; overflow:hidden;
     box-shadow:0 8px 24px rgba(0,0,0,.4);
-    opacity:0.5; position:relative;">
+    opacity:0.8; position:relative;">
 
     <!-- Always-on drag/tap overlay -->
     <div id="iw-drag-overlay" style="
@@ -760,7 +760,7 @@ backToTop.addEventListener("click", () => {
 
   <!-- Close button (outside, NE corner) -->
   <button id="iw-close-btn" style="
-    position:absolute; top:-12px; right:-12px;
+    position:absolute; top:-6px; right:-6px;
     background:#c00; color:#fff; border:none;
     border-radius:50%; width:26px; height:26px;
     font:700 14px/1 system-ui; cursor:pointer;
@@ -774,7 +774,7 @@ backToTop.addEventListener("click", () => {
   const overlay= document.getElementById('iw-drag-overlay');
   const closeBtn = document.getElementById('iw-close-btn');
 
-  const BASE = 160;   // base diameter
+  const BASE = 100;   // base diameter
   const SCALE = 2;    // expand factor
   let expanded = false;
 
