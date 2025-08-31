@@ -732,86 +732,94 @@ backToTop.addEventListener("click", () => {
 </script>
 
   <!-- Floating video-->
+
+<!-- Outer container (no clipping) -->
 <div id="infowars-floater" style="
   position:fixed; bottom:14px; left:14px;
-  width:160px; height:160px;
-  background:#0b1220; border:2px solid #f0c000;
-  border-radius:50%; overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);
-  z-index:9999; opacity:0.5;
-  transition: width .18s ease, height .18s ease, left .18s ease, top .18s ease;">
+  z-index:9999;">
 
-  <!-- Drag/Tap overlay -->
-  <div id="iw-drag-overlay" style="
-    position:absolute; inset:0;
-    cursor:move; background:transparent; z-index:2; border-radius:50%;"></div>
+  <!-- Circular bubble (clips iframe) -->
+  <div id="iw-bubble" style="
+    width:160px; height:160px;
+    background:#0b1220; border:2px solid #f0c000;
+    border-radius:50%; overflow:hidden;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    opacity:0.5; position:relative;">
 
-  <!-- Close button (hidden until enlarged) -->
+    <!-- Always-on drag/tap overlay -->
+    <div id="iw-drag-overlay" style="
+      position:absolute; inset:0;
+      cursor:move; background:transparent; z-index:2; border-radius:50%;"></div>
+
+    <iframe width="100%" height="100%"
+      src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
+      frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+      referrerpolicy="origin-when-cross-origin" style="display:block; border-radius:50%;">
+    </iframe>
+  </div>
+
+  <!-- Close button (outside, NE corner) -->
   <button id="iw-close-btn" style="
-    position:absolute; top:6px; right:6px;
+    position:absolute; top:-12px; right:-12px;
     background:#c00; color:#fff; border:none;
-    border-radius:50%; width:24px; height:24px;
+    border-radius:50%; width:26px; height:26px;
     font:700 14px/1 system-ui; cursor:pointer;
-    display:none; z-index:3;">✕</button>
-
-  <iframe width="100%" height="100%"
-    src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
-    frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-    referrerpolicy="origin-when-cross-origin" style="display:block; border-radius:50%;">
-  </iframe>
+    display:none; z-index:10000; box-shadow:0 2px 6px rgba(0,0,0,.35);">✕</button>
 </div>
 
 <script>
 (() => {
-  const box = document.getElementById('infowars-floater');
-  const overlay = document.getElementById('iw-drag-overlay');
+  const box    = document.getElementById('infowars-floater'); // outer (drags)
+  const bubble = document.getElementById('iw-bubble');        // circular clip
+  const overlay= document.getElementById('iw-drag-overlay');
   const closeBtn = document.getElementById('iw-close-btn');
 
   const BASE = 160;   // base diameter
   const SCALE = 2;    // expand factor
   let expanded = false;
 
-  let dragging = false, sx=0, sy=0, sl=0, st=0, downTime=0, lastX=0, lastY=0;
+  let dragging=false, sx=0, sy=0, sl=0, st=0, downTime=0, lastX=0, lastY=0;
 
-  function clamp(pos, size, max) {
+  function clamp(pos, size, max){
     return Math.min(max - size - 6, Math.max(6, pos));
   }
 
-  function applySize() {
+  function applySize(){
     const target = expanded ? BASE * SCALE : BASE;
-    // keep inside viewport after resize
-    const rect = box.getBoundingClientRect();
-    let left = rect.left;
-    let top  = rect.top;
 
+    // Update bubble size
+    bubble.style.width = target + 'px';
+    bubble.style.height= target + 'px';
+
+    // Keep whole component within viewport
+    const rect = box.getBoundingClientRect();
+    let left = rect.left, top = rect.top;
     left = clamp(left, target, window.innerWidth);
     top  = clamp(top,  target, window.innerHeight);
-
     box.style.left = left + 'px';
     box.style.top  = top  + 'px';
-    box.style.width  = target + 'px';
-    box.style.height = target + 'px';
 
     // Show close button only when expanded
     closeBtn.style.display = expanded ? 'block' : 'none';
   }
 
-  function toggleSize() {
+  function toggleSize(){
     expanded = !expanded;
     applySize();
   }
 
-  function pointFromEvent(e) {
+  function pt(e){
     if (e.touches && e.touches[0]) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
     if (e.changedTouches && e.changedTouches[0]) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
     return {x:e.clientX, y:e.clientY};
   }
 
   function startDrag(e){
+    // ignore drags starting on the close button
+    if (e.target === closeBtn) return;
     dragging = true;
-    const p = pointFromEvent(e);
-    sx = p.x; sy = p.y;
-    lastX = p.x; lastY = p.y;
+    const p = pt(e);
+    sx = p.x; sy = p.y; lastX = p.x; lastY = p.y;
     const r = box.getBoundingClientRect();
     sl = r.left; st = r.top;
     downTime = Date.now();
@@ -820,44 +828,45 @@ backToTop.addEventListener("click", () => {
 
   function onMove(e){
     if(!dragging) return;
-    const p = pointFromEvent(e);
-    lastX = p.x; lastY = p.y;
+    const p = pt(e); lastX = p.x; lastY = p.y;
 
-    const nl = clamp(sl + (p.x - sx), box.offsetWidth,  window.innerWidth);
-    const nt = clamp(st + (p.y - sy), box.offsetHeight, window.innerHeight);
+    const currentSize = bubble.offsetWidth;
+    const nl = clamp(sl + (p.x - sx), currentSize, window.innerWidth);
+    const nt = clamp(st + (p.y - sy), currentSize, window.innerHeight);
 
     box.style.left = nl + 'px';
     box.style.top  = nt + 'px';
     box.style.right = 'auto';
-    box.style.bottom = 'auto';
+    box.style.bottom= 'auto';
     e.preventDefault();
   }
 
   function endDrag(){
     const elapsed = Date.now() - downTime;
-    const dx = (lastX - sx);
-    const dy = (lastY - sy);
-    const dist = Math.hypot(dx, dy);
-
+    const dist = Math.hypot(lastX - sx, lastY - sy);
+    const tap = elapsed < 300 && dist < 6;
     dragging = false;
-
-    // Treat quick, tiny movement as a TAP -> toggle size
-    if (elapsed < 300 && dist < 6) {
-      toggleSize();
-    }
+    if (tap) toggleSize();
   }
 
-  // Close button handler
+  // Close
   closeBtn.addEventListener('click', () => {
     box.style.display = 'none';
   });
 
-  // Init
-  box.style.left = box.getBoundingClientRect().left + 'px';
-  box.style.top  = box.getBoundingClientRect().top  + 'px';
+  // Initialize absolute position from computed
+  const r0 = box.getBoundingClientRect();
+  box.style.left = r0.left + 'px';
+  box.style.top  = r0.top  + 'px';
 
+  // Events
+  // Use overlay for drags over the bubble (covers iframe),
+  // and also listen on the outer box so the ring around it can drag too.
   overlay.addEventListener('mousedown', startDrag);
   overlay.addEventListener('touchstart', startDrag, {passive:false});
+  box.addEventListener('mousedown', startDrag);
+  box.addEventListener('touchstart', startDrag, {passive:false});
+
   window.addEventListener('mousemove', onMove, {passive:false});
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('mouseup', endDrag);
