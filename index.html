@@ -622,7 +622,12 @@ function renderPosts(data) {
   resultBox.innerHTML = validPosts.map(post => {
     const readableDate = post.timestamp ? new Date(post.timestamp * 1000).toLocaleString() : "Date not available";
     const displayName = post.user?.name || post.pageName || "Unknown Page";
-const mediaHTML = ""; // don’t render any images
+    const mediaThumbnail = post.media[0]?.thumbnail;
+    const mediaUrl = post.url || post.postUrl;
+
+    const mediaHTML = mediaThumbnail && mediaUrl
+      ? `<a href="${mediaUrl}" target="_blank"><img src="${mediaThumbnail}" class="news-media" /></a>`
+      : "";
 
     return `
       <div class="card">
