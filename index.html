@@ -449,11 +449,21 @@ body > main {
   <main>
 <div class="main-container">
   <div class="column">
+
+    
     <div 
-      class="section-title" 
-      onclick="toggleSection('facebook-section', 'facebook-preview')" 
-      style="background:#004aad;"
-    >Facebook News Today Tap here</div>
+  class="section-title" 
+  onclick="toggleSection('facebook-section', 'facebook-preview')" 
+  style="background:#004aad; display:flex; justify-content:space-between; align-items:center; color:#fff; padding:12px 16px; border-radius:12px; font-weight:600; font-family:sans-serif; cursor:pointer;"
+>
+  <span>Facebook News Today</span>
+  <span style="background:#fff; color:#004aad; padding:4px 12px; border-radius:999px; font-size:14px; font-weight:600; cursor:pointer;">
+    Tap here
+  </span>
+    </div>
+
+
+    
     <div id="facebook-preview" class="preview-strip"></div>
     <div id="facebook-section" style="display: none;">
       <div id="status" style="font-size: 0.8rem; color: gray; padding: 5px;">Loading latest posts...</div>
