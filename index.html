@@ -734,17 +734,25 @@ backToTop.addEventListener("click", () => {
   <!-- Floating video-->
 <div id="infowars-floater" style="
   position:fixed; bottom:14px; left:14px;
-  width:100px; height:100px;
+  width:160px; height:160px;
   background:#0b1220; border:2px solid #f0c000;
   border-radius:50%; overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,.4);
-  z-index:9999; opacity:0.8;
+  z-index:9999; opacity:0.5;
   transition: width .18s ease, height .18s ease, left .18s ease, top .18s ease;">
 
-  <!-- Always-on drag/tap overlay -->
+  <!-- Drag/Tap overlay -->
   <div id="iw-drag-overlay" style="
     position:absolute; inset:0;
     cursor:move; background:transparent; z-index:2; border-radius:50%;"></div>
+
+  <!-- Close button (hidden until enlarged) -->
+  <button id="iw-close-btn" style="
+    position:absolute; top:6px; right:6px;
+    background:#c00; color:#fff; border:none;
+    border-radius:50%; width:24px; height:24px;
+    font:700 14px/1 system-ui; cursor:pointer;
+    display:none; z-index:3;">✕</button>
 
   <iframe width="100%" height="100%"
     src="https://www.youtube.com/embed/RQiH99hoq1I?autoplay=1&mute=1&playsinline=1"
@@ -757,9 +765,10 @@ backToTop.addEventListener("click", () => {
 (() => {
   const box = document.getElementById('infowars-floater');
   const overlay = document.getElementById('iw-drag-overlay');
+  const closeBtn = document.getElementById('iw-close-btn');
 
-  const BASE = 100;              // base diameter (px)
-  const SCALE = 2;               // expand factor (2x)
+  const BASE = 160;   // base diameter
+  const SCALE = 2;    // expand factor
   let expanded = false;
 
   let dragging = false, sx=0, sy=0, sl=0, st=0, downTime=0, lastX=0, lastY=0;
@@ -782,6 +791,9 @@ backToTop.addEventListener("click", () => {
     box.style.top  = top  + 'px';
     box.style.width  = target + 'px';
     box.style.height = target + 'px';
+
+    // Show close button only when expanded
+    closeBtn.style.display = expanded ? 'block' : 'none';
   }
 
   function toggleSize() {
@@ -821,7 +833,7 @@ backToTop.addEventListener("click", () => {
     e.preventDefault();
   }
 
-  function endDrag(e){
+  function endDrag(){
     const elapsed = Date.now() - downTime;
     const dx = (lastX - sx);
     const dy = (lastY - sy);
@@ -835,7 +847,12 @@ backToTop.addEventListener("click", () => {
     }
   }
 
-  // init position to match inline bottom/left if not yet moved
+  // Close button handler
+  closeBtn.addEventListener('click', () => {
+    box.style.display = 'none';
+  });
+
+  // Init
   box.style.left = box.getBoundingClientRect().left + 'px';
   box.style.top  = box.getBoundingClientRect().top  + 'px';
 
