@@ -495,16 +495,37 @@ body > main {
 </div>
 
 
+<!-- Live Chat header -->
 <div 
   class="section-title" 
-  onclick="toggleSection('chat-section', 'chat-preview')" 
+  onclick="toggleChat()" 
   style="background:#0b1220; margin:10px; display:flex; justify-content:space-between; align-items:center; color:#fff; padding:12px 16px; border-radius:12px; font-weight:600; font-family:sans-serif; cursor:pointer;"
 >
   <span>Live Chat</span>
-  <span style="background:#fff; color:#0b1220; padding:4px 12px; border-radius:999px; font-size:14px; font-weight:600; cursor:pointer;">
+  <span style="background:#fff; color:#0b1220; padding:4px 12px; border-radius:999px; font-size:14px; font-weight:600;">
     Tap here
   </span>
 </div>
+
+<!-- Minnit Chat (starts hidden) -->
+<div id="chat-wrapper" style="display:none; margin:10px 10px 0;">
+  <script src="https://minnit.chat/js/embed.js?c=1752216300" defer></script>
+  <span
+    class="minnit-chat-sembed"
+    data-chatname="https://organizations.minnit.chat/238777848446982/c/Main?embed"
+    data-style="width:90%; height:300px; max-height:90vh;"
+    data-version="1.52"
+  >Chat</span>
+</div>
+
+<script>
+  function toggleChat(){
+    const box = document.getElementById('chat-wrapper');
+    const show = box.style.display !== 'block';
+    box.style.display = show ? 'block' : 'none';
+    if (show) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
     
 
 <!-- Poll Link Card -->
