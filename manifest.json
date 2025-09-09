@@ -1,6 +1,6 @@
 {
-  "name": "Info Wars",
-  "short_name": "Info Wars",
+  "name": "Info Maps",
+  "short_name": "Info Maps",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
